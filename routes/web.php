@@ -19,7 +19,7 @@ Route::get('/', function () {
     $zk = new ZKTeco('192.168.1.201');
     if ($zk->connect()) {
         $zk->disableDevice();
-//        dd($zk->getUser()[10469]);
+        dd($zk->getAttendance());
     }
 
 //    return redirect("/admin");

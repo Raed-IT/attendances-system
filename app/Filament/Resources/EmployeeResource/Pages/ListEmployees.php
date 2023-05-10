@@ -5,6 +5,7 @@ namespace App\Filament\Resources\EmployeeResource\Pages;
 use App\Filament\Resources\EmployeeResource;
 use App\Models\Device;
 use App\Models\Employee;
+use App\Traits\SendNotificationsTrait;
 use Carbon\Carbon;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
@@ -16,6 +17,8 @@ use Rats\Zkteco\Lib\ZKTeco;
 
 class ListEmployees extends ListRecords
 {
+    use  SendNotificationsTrait;
+
     protected static string $resource = EmployeeResource::class;
 
     protected function getActions(): array
@@ -42,9 +45,11 @@ class ListEmployees extends ListRecords
                 foreach ($employees as $employee) {
                     Employee::updateOrCreate(["uid" => $employee["uid"]], $employee);
                 }
-                Notification::make()->title("تم ")->success()->send();
+                $zk->disableDevice();
+                $this->notifyCurrentUser("تم مزامنة الموظفين", true, true);
             } catch (\Exception $e) {
-                Notification::make()->title("خطاء")->danger()->send();
+                $zk->disableDevice();
+                Notification::make()->title(" فشل  مزامنة الموظفين")->danger()->send();
             }
         } else {
             Notification::make()->title("لم بتم الوصول الى الجهاز اكد من الاتصال ")->danger()->send();
