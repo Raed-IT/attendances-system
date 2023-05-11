@@ -31,11 +31,12 @@ class AttendanceResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make("uid")->label("uid")->searchable(),
-                Tables\Columns\TextColumn::make("user_id")->label("user_id")->searchable(),
-                Tables\Columns\TextColumn::make("timestamp")->label("timestamp"),
-                Tables\Columns\TextColumn::make("state")->label("state"),
-                Tables\Columns\TextColumn::make("type")->label("type"),
+                Tables\Columns\TextColumn::make("uid")->label("معرف البصمة")->searchable(),
+                Tables\Columns\BadgeColumn::make("employee.name")->label("الموظف")->searchable(),
+                Tables\Columns\TextColumn::make("user_id")->label("معرف الموظف")->searchable(),
+                Tables\Columns\TextColumn::make("timestamp")->label("تاريخ البصم")->sortable(),
+                Tables\Columns\TextColumn::make("state")->label("الحالة"),
+                Tables\Columns\TextColumn::make("type")->label("نوع"),
             ])
             ->filters([
                 //

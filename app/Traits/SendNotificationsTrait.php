@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\Models\User;
 use Filament\Notifications\Notification;
+use function Symfony\Component\String\s;
 
 trait SendNotificationsTrait
 {
@@ -24,13 +25,15 @@ trait SendNotificationsTrait
     public function notifyCurrentUser($message, $toDataBase = false, bool $success = false)
     {
         $user = auth()->user();
+
         $notification = Notification::make()->title($message);
         if (!$success) {
             $notification->danger();
-        }else{
+        } else {
             $notification->success();
+            $notification->send();
         }
-        $notification->send();
+
         if ($toDataBase) {
             $user->notify($notification->toDatabase());
             \DB::commit();

@@ -22,10 +22,6 @@ class ListAttendances extends ListRecords
     protected static string $resource = AttendanceResource::class;
 
 
-    protected function getTableQuery(): Builder
-    {
-        return Attendance::query()->orderByDesc("timestamp");
-    }
 
     protected function getActions(): array
     {
@@ -46,26 +42,28 @@ class ListAttendances extends ListRecords
 
     protected function syncEmployeeAttendanceFromDevice($data)
     {
+
         $zk = new ZKTeco($data["device_ip"]);
         if ($zk->connect()) {
             $zk->enableDevice();
             $attendances = $zk->getAttendance();
-            try {
-                foreach ($attendances as $attendance) {
+            foreach ($attendances as $attendance) {
 
+                try {
                     $user_id = $attendance['id'];
                     $data = Arr::except($attendance, ['id']);
                     $data['user_id'] = $user_id;
                     Attendance::updateOrCreate(['timestamp' => $attendance['timestamp'], "uid" => $attendance['uid']], $data);
+                } catch (\Exception $e) {
+                    $zk->disableDevice();
+                    $this->notifyCurrentUser("فشل مزامنة مزامنة الموظفين".$attendance["uid"] , true);
                 }
-                $zk->disableDevice();
-                $zk->disconnect();
-
-                $this->notifyCurrentUser("تم مزامنة  حركة الموظفين", true, true);
-            } catch (\Exception $e) {
-                $zk->disableDevice();
-                Notification::make()->title(" فشل مزامنة مزامنة الموظفين")->danger()->send();
             }
+            $zk->disableDevice();
+            $zk->disconnect();
+
+            $this->notifyCurrentUser("تم مزامنة  حركة الموظفين", true, true);
+
         } else {
             Notification::make()->title("لم بتم الوصول الى الجهاز اكد من الاتصال ")->danger()->send();
         }
