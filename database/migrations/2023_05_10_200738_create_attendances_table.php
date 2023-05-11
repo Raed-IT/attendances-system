@@ -14,9 +14,10 @@ return new class extends Migration {
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
             $table->string("uid")->nullable();
-//            $table->string("id")->nullable();
-            $table->date("timestamp");
-            $table->enum("state", [AttendanceTypeEnum::CHECK_IN->value, AttendanceTypeEnum::CHECK_OUT->value]);
+            $table->foreignId("user_id")->constrained("employees" ,"userid")->cascadeOnDelete();
+            $table->timestamp("timestamp");
+            $table->string("state");
+            $table->string("type");
             $table->timestamps();
         });
     }

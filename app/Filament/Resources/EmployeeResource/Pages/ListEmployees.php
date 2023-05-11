@@ -15,6 +15,7 @@ use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Rats\Zkteco\Lib\ZKTeco;
 
+
 class ListEmployees extends ListRecords
 {
     use  SendNotificationsTrait;
@@ -27,7 +28,8 @@ class ListEmployees extends ListRecords
             Actions\CreateAction::make(),
             Actions\Action::make("sync")->label("استيراد الموظفين من جهاز البصمة ")
                 ->requiresConfirmation()->modalButton('مزامنة')->form([
-                    Select::make("device_ip")->options(fn() => Device::all()->pluck("name", "ip"))->required()
+                    Select::make("device_ip")->options(fn() => Device::all()->pluck("name", "ip"))
+                        ->required()->label("اختر جهاز البصمة"),
                 ])
                 ->color("success")->action(function ($data) {
                     $this->syncEmployeeFromDevice($data);
