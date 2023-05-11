@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/', function () {
+
 //    $zk = new ZKTeco('192.168.1.211');
 //    if ($zk->connect()) {
 //        $zk->disableDevice();

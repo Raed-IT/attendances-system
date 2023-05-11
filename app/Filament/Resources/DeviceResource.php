@@ -18,6 +18,8 @@ class DeviceResource extends Resource
     protected static ?string $model = Device::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $label = 'جهاز     ';
+    protected static ?string $pluralLabel = 'الاجهزة ';
 
     public static function form(Form $form): Form
     {

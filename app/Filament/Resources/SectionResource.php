@@ -17,7 +17,8 @@ class SectionResource extends Resource
     protected static ?string $model = Section::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
-
+    protected static ?string $label = 'قسم';
+    protected static ?string $pluralLabel = 'اقسام المؤسسة   ';
     public static function form(Form $form): Form
     {
         return $form

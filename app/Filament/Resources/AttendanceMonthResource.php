@@ -4,25 +4,27 @@ namespace App\Filament\Resources;
 
 use App\Enums\AttendanceStateEnum;
 use App\Enums\AttendanceTypeEnum;
-use App\Filament\Resources\AttendanceResource\Pages;
-use App\Filament\Resources\AttendanceResource\RelationManagers;
-use App\Models\Attendance;
+use App\Filament\Resources\AttendanceMonthResource\Pages;
+use App\Filament\Resources\AttendanceMonthResource\RelationManagers;
+use App\Models\AttendanceMonth;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Rats\Zkteco\Lib\Helper\Util;
-use Filament\Tables\Filters\Filter;
-class AttendanceResource extends Resource
+
+class AttendanceMonthResource extends Resource
 {
-    protected static ?string $model = Attendance::class;
+    protected static ?string $model = AttendanceMonth::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
-    protected static ?string $label = 'التقرير     ';
-    protected static ?string $pluralLabel = 'جميع التقارير ';
+    protected static ?string $label = 'تقرير  الشهري  ';
+    protected static ?string $pluralLabel = ' تقارير  هذا الشهر';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -85,9 +87,9 @@ class AttendanceResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListAttendances::route('/'),
-            'create' => Pages\CreateAttendance::route('/create'),
-            'edit' => Pages\EditAttendance::route('/{record}/edit'),
+            'index' => Pages\ListAttendanceMonths::route('/'),
+            'create' => Pages\CreateAttendanceMonth::route('/create'),
+            'edit' => Pages\EditAttendanceMonth::route('/{record}/edit'),
         ];
     }
 }

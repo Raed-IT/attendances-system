@@ -20,7 +20,8 @@ class SalaryResource extends Resource
     protected static ?string $model = Salary::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
-
+    protected static ?string $label = 'راتب';
+    protected static ?string $pluralLabel = 'انواع الرواتب   ';
     public static function form(Form $form): Form
     {
         return $form
