@@ -4,8 +4,8 @@ namespace App\Enums;
 
 enum AttendanceTypeEnum: string
 {
-    case CHECK_IN = '0';
-    case CHECK_OUT = '1';
+    case CHECK_IN = 'Check-in';
+    case CHECK_OUT = 'Check-out';
     public function name(): string
     {
         return match ($this) {
@@ -17,8 +17,8 @@ enum AttendanceTypeEnum: string
     public function color(): string
     {
         return match ($this) {
-            self::CHECK_IN => 'warning',
-            self::CHECK_OUT => 'secondary',
+            self::CHECK_IN => 'danger',
+            self::CHECK_OUT => 'success',
          };
 
     }

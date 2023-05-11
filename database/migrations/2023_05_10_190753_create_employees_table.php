@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->bigInteger("uid")->nullable();
             $table->bigInteger("userid")->nullable()->unique()->unsigned();
+            $table->bigInteger("device_id")->nullable();
             $table->bigInteger("namerole")->nullable();
             $table->boolean("role")->nullable();
             $table->string("password")->nullable();

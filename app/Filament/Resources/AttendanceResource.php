@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\AttendanceStateEnum;
+use App\Enums\AttendanceTypeEnum;
 use App\Filament\Resources\AttendanceResource\Pages;
 use App\Filament\Resources\AttendanceResource\RelationManagers;
 use App\Models\Attendance;
@@ -12,6 +14,7 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Rats\Zkteco\Lib\Helper\Util;
 
 class AttendanceResource extends Resource
 {
@@ -35,11 +38,18 @@ class AttendanceResource extends Resource
                 Tables\Columns\BadgeColumn::make("employee.name")->label("الموظف")->searchable(),
                 Tables\Columns\TextColumn::make("user_id")->label("معرف الموظف")->searchable(),
                 Tables\Columns\TextColumn::make("timestamp")->label("تاريخ البصم")->sortable(),
-                Tables\Columns\TextColumn::make("state")->label("الحالة"),
-                Tables\Columns\TextColumn::make("type")->label("نوع"),
+                Tables\Columns\BadgeColumn::make("state")->label("الحالة")
+                    ->formatStateUsing(fn($state) => AttendanceStateEnum::tryFrom(Util::getAttState($state))->name()),
+                Tables\Columns\BadgeColumn::make("type")
+                    ->formatStateUsing(fn($state) => AttendanceTypeEnum::tryFrom(Util::getAttType($state))->name())
+                    ->colors([
+                        AttendanceTypeEnum::CHECK_OUT->color() => AttendanceTypeEnum::CHECK_OUT->value,
+                        AttendanceTypeEnum::CHECK_IN->color() => AttendanceTypeEnum::CHECK_IN->value,
+                    ])
+                    ->label("نوع"),
             ])
             ->filters([
-                //
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

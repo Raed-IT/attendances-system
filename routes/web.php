@@ -16,12 +16,13 @@ use Illuminate\Support\Facades\Route;
 use Rats\Zkteco\Lib\ZKTeco;
 
 Route::get('/', function () {
-    $zk = new ZKTeco('192.168.1.201');
-    if ($zk->connect()) {
-        $zk->disableDevice();
-        dd($zk->getAttendance());
-    }
+//    $zk = new ZKTeco('192.168.1.201');
+//    if ($zk->connect()) {
+//        $zk->disableDevice();
+////       dd( $zk->removeUser(1501));
+//
+//    }
 
-//    return redirect("/admin");
+    return redirect("/admin");
 
 });

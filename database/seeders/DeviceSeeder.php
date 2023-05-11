@@ -15,11 +15,13 @@ class DeviceSeeder extends Seeder
     {
         Device::create([
             "name" => "بصامة الرجال ",
-            "ip" =>"192.168.1.201",
+            "is_connected" => false,
+            "ip" => "192.168.1.201",
         ]);
         Device::create([
             "name" => "بصامة النساء ",
-            "ip" =>"192.168.1.211",
+            "is_connected" => false,
+            "ip" => "192.168.1.211",
         ]);
     }
 }
