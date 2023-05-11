@@ -4,8 +4,8 @@ namespace App\Enums;
 
 enum EmployeeDeviceTypeEnum: string
 {
-    case ADMIN = 'Admin';
-    case USER = 'Userr';
+    case ADMIN = '14';
+    case USER = '0';
 
 
     public function name(): string

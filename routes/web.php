@@ -13,13 +13,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-use Rats\Zkteco\Lib\ZKTeco;
 
 Route::get('/', function () {
-//    $zk = new ZKTeco('192.168.1.201');
+//    $zk = new ZKTeco('192.168.1.211');
 //    if ($zk->connect()) {
 //        $zk->disableDevice();
-////       dd( $zk->removeUser(1501));
+//       dd( $zk->getUser());
 //
 //    }
 

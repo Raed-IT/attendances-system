@@ -2,25 +2,20 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\EmployeeDeviceTypeEnum;
 use App\Enums\PermanenceTypeEnum;
 use App\Filament\Resources\EmployeeResource\Pages;
-use App\Filament\Resources\EmployeeResource\RelationManagers;
 use App\Models\Device;
 use App\Models\Employee;
 use App\Models\Salary;
 use App\Traits\SendNotificationsTrait;
-use Faker\Provider\Text;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
-use Filament\Tables\Actions\BulkAction;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Rats\Zkteco\Lib\ZKTeco;
-use Illuminate\Database\Eloquent\Collection;
 
 
 class EmployeeResource extends Resource
@@ -38,17 +33,21 @@ class EmployeeResource extends Resource
                 Forms\Components\Card::make()->schema([
                     Forms\Components\TextInput::make("name")->label("اسم الموضف ")->required()->unique(ignoreRecord: true),
 
-                    Forms\Components\TextInput::make("userid")->label("ID المستخدم")->required()->unique(ignoreRecord: true),
-
                     Forms\Components\Select::make("device_id")->relationship("device", "name")->label("الجهاز")->required(),
 
-                    Forms\Components\TextInput::make("role")->label("uid")->unique(ignoreRecord: true),
+                    Forms\Components\Select::make("role")->options([
+                        EmployeeDeviceTypeEnum::ADMIN->value => EmployeeDeviceTypeEnum::ADMIN->name(),
+                        EmployeeDeviceTypeEnum::USER->value => EmployeeDeviceTypeEnum::USER->name(),
+                    ]),
+                    Forms\Components\TextInput::make("userid")->label("ID المستخدم")->required()->unique(ignoreRecord: true),
 
-                    Forms\Components\TextInput::make("password")->label("uid")->unique(ignoreRecord: true),
+                    Forms\Components\TextInput::make("uid")->label("uid")->unique(ignoreRecord: true),
 
-                    Forms\Components\TextInput::make("cardno")->label("uid")->unique(ignoreRecord: true),
 
-                    Forms\Components\TextInput::make("name")->label("uid")->unique(ignoreRecord: true),
+                    Forms\Components\TextInput::make("password")->label("password")->unique(ignoreRecord: true),
+
+//                    Forms\Components\TextInput::make("cardno")->label("cardno")->unique(ignoreRecord: true),
+
 
                     Forms\Components\Select::make("permanence_type")->options([
                         PermanenceTypeEnum::ADMINISTRATIVE->value => PermanenceTypeEnum::ADMINISTRATIVE->name(),

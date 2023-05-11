@@ -23,7 +23,6 @@ return new class extends Migration {
 
 
             $table->integer("bank_no")->nullable();
-            $table->integer("section_id")->nullable();
             $table->foreignId("salary_id")->nullable()->constrained('salaries')->nullOnDelete();
             $table->enum("permanence_type", [
                 \App\Enums\PermanenceTypeEnum::ADMINISTRATIVE->value,
@@ -32,6 +31,7 @@ return new class extends Migration {
             ])->default(\App\Enums\PermanenceTypeEnum::ADMINISTRATIVE->value)->comment("نوع الدوام ")->nullable();
             $table->string("job_description")->comment("الوصف الوظيفي ")->nullable();
 
+            $table->foreignId("section_id")->nullable()->constrained('sections')->nullOnDelete();
 
             $table->timestamps();
         });
