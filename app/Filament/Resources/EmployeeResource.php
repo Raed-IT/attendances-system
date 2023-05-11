@@ -2,10 +2,12 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\PermanenceTypeEnum;
 use App\Filament\Resources\EmployeeResource\Pages;
 use App\Filament\Resources\EmployeeResource\RelationManagers;
 use App\Models\Device;
 use App\Models\Employee;
+use App\Models\Salary;
 use App\Traits\SendNotificationsTrait;
 use Faker\Provider\Text;
 use Filament\Forms;
@@ -34,13 +36,36 @@ class EmployeeResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Card::make()->schema([
-                    Forms\Components\TextInput::make("uid")->label("اسم الموضف ")->required()->unique(),
-                    Forms\Components\TextInput::make("userid")->label("")->required()->unique(),
-                    Forms\Components\TextInput::make("device_id")->label("البصامة")->required()->unique(),
-                    Forms\Components\TextInput::make("role")->label("uid")->unique(),
-                    Forms\Components\TextInput::make("password")->label("uid")->unique(),
-                    Forms\Components\TextInput::make("cardno")->label("uid")->unique(),
-                    Forms\Components\TextInput::make("name")->label("uid")->unique(),
+                    Forms\Components\TextInput::make("name")->label("اسم الموضف ")->required()->unique(ignoreRecord: true),
+
+                    Forms\Components\TextInput::make("userid")->label("ID المستخدم")->required()->unique(ignoreRecord: true),
+
+                    Forms\Components\Select::make("device_id")->relationship("device", "name")->label("الجهاز")->required(),
+
+                    Forms\Components\TextInput::make("role")->label("uid")->unique(ignoreRecord: true),
+
+                    Forms\Components\TextInput::make("password")->label("uid")->unique(ignoreRecord: true),
+
+                    Forms\Components\TextInput::make("cardno")->label("uid")->unique(ignoreRecord: true),
+
+                    Forms\Components\TextInput::make("name")->label("uid")->unique(ignoreRecord: true),
+
+                    Forms\Components\Select::make("permanence_type")->options([
+                        PermanenceTypeEnum::ADMINISTRATIVE->value => PermanenceTypeEnum::ADMINISTRATIVE->name(),
+                        PermanenceTypeEnum::SHIFT->value => PermanenceTypeEnum::SHIFT->name(),
+                        PermanenceTypeEnum::CONSTANT->value => PermanenceTypeEnum::CONSTANT->name(),
+                    ])->required()->label("نوع الدوام")->reactive()->afterStateUpdated(fn(callable $set) => $set("salary_id", null)),
+
+                    Forms\Components\Select::make("salary_id")->options(function (callable $get) {
+                        $data = [];
+                        if ($get('permanence_type')) {
+                            $salaries = Salary::whereType($get('permanence_type'))->get();
+                            foreach ($salaries as $salary) {
+                                $data += [$salary->id => PermanenceTypeEnum::tryFrom($salary->type)->name() . $salary->count_of_shift . "ساعة" . $salary->price . "$"];
+                            }
+                        }
+                        return $data;
+                    })->required()->label("نوع الراتب"),
                 ])]);
     }
 
@@ -52,9 +77,14 @@ class EmployeeResource extends Resource
                 Tables\Columns\TextColumn::make("uid")->label("uid")->searchable(),
                 Tables\Columns\TextColumn::make("userid")->label("userid")->sortable()->searchable(),
                 Tables\Columns\TextColumn::make("role")->label("role"),
-                Tables\Columns\TextColumn::make("password")->label("password"),
-                Tables\Columns\TextColumn::make("cardno")->label("cardno")->searchable(),
-
+                Tables\Columns\TextColumn::make("bank_no")->label("password"),
+                Tables\Columns\BadgeColumn::make('salary_id')->formatStateUsing(function ($state) {
+                    if (!is_null($state)) {
+                        $salary = Salary::find($state);
+                        return PermanenceTypeEnum::tryFrom($salary->type)->name() . ' ' . $salary->count_of_shift . "ساعة " . $salary->price . "$";
+                    }
+                    return "";
+                })->label('نوع الراتب')->sortable(),
             ])
             ->filters([
                 //
@@ -70,38 +100,38 @@ class EmployeeResource extends Resource
 
             ])
             ->bulkActions([
-                BulkAction::make('delete')
-                    ->requiresConfirmation()
-                    ->action(function (Collection $records) {
-
-                        $zk = new ZKTeco("192.168.1.201");
-                        if ($zk->connect()) {
-                            $zk->enableDevice();
-                            $count = count($records);
-                            try {
-                                foreach ($records as $record) {
-                                    $zk->removeUser($record->uid);
-                                    $record->delete();
-                                }
-                                $notification = Notification::make()->title("تم حذف " . $count . " موظف ")->success();
-                                $notification->send();
-                                $notification->toDatabase();
-                                $zk->disableDevice();
-                            } catch (\Exception $e) {
-                                $notification = Notification::make()->title("تم فشل في الحذف ")->success();
-                                $notification->send();
-                                $notification->toDatabase();
-
-
-                                $zk->disableDevice();
-                            }
-                        } else {
-                            $notification = Notification::make()->title("لايوجد اتصال ")->success();
-                            $notification->send();
-                            $notification->toDatabase();
-
-                        }
-                    })
+//                BulkAction::make('delete')
+//                    ->requiresConfirmation()
+//                    ->action(function (Collection $records) {
+//
+//                        $zk = new ZKTeco("192.168.1.211");
+//                        if ($zk->connect()) {
+//                            $zk->enableDevice();
+//                            $count = count($records);
+//                            try {
+//                                foreach ($records as $record) {
+//                                    $zk->removeUser($record->uid);
+//                                    $record->delete();
+//                                }
+//                                $notification = Notification::make()->title("تم حذف " . $count . " موظف ")->success();
+//                                $notification->send();
+//                                $notification->toDatabase();
+//                                $zk->disableDevice();
+//                            } catch (\Exception $e) {
+//                                $notification = Notification::make()->title("تم فشل في الحذف ")->success();
+//                                $notification->send();
+//                                $notification->toDatabase();
+//
+//
+//                                $zk->disableDevice();
+//                            }
+//                        } else {
+//                            $notification = Notification::make()->title("لايوجد اتصال ")->success();
+//                            $notification->send();
+//                            $notification->toDatabase();
+//
+//                        }
+//                    })
             ]);
     }
 
@@ -125,6 +155,7 @@ class EmployeeResource extends Resource
     {
         $device = Device::find($record->device_id);
         $zk = new ZKTeco($device->ip);
+
         if ($zk->connect()) {
             $zk->enableDevice();
             $zk->removeUser($record->uid);

@@ -15,7 +15,7 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Rats\Zkteco\Lib\Helper\Util;
-
+use Filament\Tables\Filters\Filter;
 class AttendanceResource extends Resource
 {
     protected static ?string $model = Attendance::class;
@@ -49,7 +49,22 @@ class AttendanceResource extends Resource
                     ->label("نوع"),
             ])
             ->filters([
-
+                Filter::make('timestamp')
+                    ->form([
+                        Forms\Components\DatePicker::make('created_from'),
+                        Forms\Components\DatePicker::make('created_until'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('timestamp', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('timestamp', '<=', $date),
+                            );
+                    })
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

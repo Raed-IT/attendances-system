@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\AttendanceResource\Pages;
 
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Resources\AttendanceResource;
 use App\Models\Attendance;
 use App\Models\Device;
@@ -22,7 +23,6 @@ class ListAttendances extends ListRecords
     protected static string $resource = AttendanceResource::class;
 
 
-
     protected function getActions(): array
     {
         return [
@@ -39,6 +39,14 @@ class ListAttendances extends ListRecords
         ];
     }
 
+    protected function getTableHeaderActions(): array
+    {
+        return [
+
+            FilamentExportHeaderAction::make('Export')->label("تصدير البيانات ")->button()->color("danger"),
+
+        ];
+    }
 
     protected function syncEmployeeAttendanceFromDevice($data)
     {
@@ -56,7 +64,7 @@ class ListAttendances extends ListRecords
                     Attendance::updateOrCreate(['timestamp' => $attendance['timestamp'], "uid" => $attendance['uid']], $data);
                 } catch (\Exception $e) {
                     $zk->disableDevice();
-                    $this->notifyCurrentUser("فشل مزامنة مزامنة الموظفين".$attendance["uid"] , true);
+                    $this->notifyCurrentUser("فشل مزامنة مزامنة الموظفين" . $attendance["uid"], true);
                 }
             }
             $zk->disableDevice();
