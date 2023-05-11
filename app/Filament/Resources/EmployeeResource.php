@@ -34,12 +34,13 @@ class EmployeeResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Card::make()->schema([
-                    Forms\Components\TextInput::make("name")->label("اسم الموضف ")->required()->unique(),
-                    Forms\Components\TextInput::make("uid")->label("uid")->required()->unique(),
-                    Forms\Components\TextInput::make("userid")->label("uid")->required()->unique(),
-                    Forms\Components\TextInput::make("role")->unique(),
+                    Forms\Components\TextInput::make("uid")->label("اسم الموضف ")->required()->unique(),
+                    Forms\Components\TextInput::make("userid")->label("")->required()->unique(),
+                    Forms\Components\TextInput::make("device_id")->label("البصامة")->required()->unique(),
+                    Forms\Components\TextInput::make("role")->label("uid")->unique(),
                     Forms\Components\TextInput::make("password")->label("uid")->unique(),
                     Forms\Components\TextInput::make("cardno")->label("uid")->unique(),
+                    Forms\Components\TextInput::make("name")->label("uid")->unique(),
                 ])]);
     }
 
