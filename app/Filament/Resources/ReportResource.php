@@ -12,6 +12,7 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Svg\Tag\Text;
 
 class ReportResource extends Resource
 {
@@ -35,7 +36,11 @@ class ReportResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make("id")->sortable()->label("ID"),
+                Tables\Columns\BadgeColumn::make("employee.name")->label("الموظف")->searchable(),
+                Tables\Columns\TextColumn::make("hours")->label("ساعات العمل "),
+                Tables\Columns\TextColumn::make("moth")->label("تقرير شهر ")->sortable(),
+
             ])
             ->filters([
                 //

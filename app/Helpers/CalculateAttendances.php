@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\Models\Attendance;
 use App\Models\Employee;
+use App\Models\Report;
 use Carbon\Carbon;
 
 class CalculateAttendances
@@ -37,8 +38,12 @@ class CalculateAttendances
                     }
                 }
             }
-            dd($totalHours);
-
+            Report::updateOrCreate([
+                'moth' => Carbon::now()->startOfMonth()->format("Y-m-d"),
+                "employee_id" => $employee->id,
+            ], [
+                "hours" => $totalHours,
+            ]);
         }
 
 

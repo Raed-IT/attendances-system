@@ -16,23 +16,37 @@ use Filament\Tables;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Rats\Zkteco\Lib\Helper\Util;
+use Livewire\Component as Livewire;
 
 class AttendanceMonthResource extends Resource
 {
+
     protected static ?string $model = AttendanceMonth::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
     protected static ?string $label = 'حركة موظف  ';
     protected static ?string $pluralLabel = '  حركات الموظفين لهذا الشهر ';
 
-    protected static ?string $navigationGroup=" التقارير الشهرية";
+    protected static ?string $navigationGroup = " التقارير الشهرية";
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
+                Forms\Components\Card::make()->schema([
+                    Forms\Components\Select::make("user_id")
+                        ->relationship("employee", "name")
+                        ->searchable()->required()->reactive()->preload()
+                        ->afterStateUpdated(function (callable $get, callable $set) {
+                            $employee = Employee::whereUserid($get('user_id'))->first();
+                            $set("uid", $employee->uid);
+                        }),
+                    Forms\Components\Hidden::make("uid")->reactive(),
+                    Forms\Components\DateTimePicker::make("timestamp")->required(),
+                    Forms\Components\Hidden::make("state")->default(1),
+                    Forms\Components\Select::make("type")->options(AttendanceTypeEnum::values())->required(),
+                ])
             ]);
     }
 
@@ -49,7 +63,7 @@ class AttendanceMonthResource extends Resource
                     ->formatStateUsing(fn($state) => AttendanceStateEnum::tryFrom(Util::getAttState($state))->name()),
                 Tables\Columns\BadgeColumn::make("type")
                     ->formatStateUsing(fn($state) => AttendanceTypeEnum::tryFrom($state)->name())
-                    ->colors(fn()=>AttendanceTypeEnum::colors())
+                    ->colors(fn() => AttendanceTypeEnum::colors())
                     ->label("نوع"),
             ])
             ->filters([

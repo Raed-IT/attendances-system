@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\EmployeeDeviceTypeEnum;
+use App\Enums\EmployeeDeviceRoleEnum;
 use App\Enums\PermanenceTypeEnum;
 use App\Filament\Resources\EmployeeResource\Pages;
 use App\Models\Device;
@@ -27,21 +27,18 @@ class EmployeeResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-collection';
     protected static ?string $label = 'موظف     ';
     protected static ?string $pluralLabel = 'الموظفين ';
-    protected static ?string $navigationGroup=" التقارير ";
+    protected static ?string $navigationGroup = " التقارير ";
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\Card::make()->schema([
-                     Forms\Components\TextInput::make("name")->label("اسم الموضف ")->required()->unique(ignoreRecord: true),
+                    Forms\Components\TextInput::make("name")->label("اسم الموضف ")->required()->unique(ignoreRecord: true),
 
                     Forms\Components\Select::make("device_id")->relationship("device", "name")->label("الجهاز")->required(),
 
-                    Forms\Components\Select::make("role")->options([
-                        EmployeeDeviceTypeEnum::ADMIN->value => EmployeeDeviceTypeEnum::ADMIN->name(),
-                        EmployeeDeviceTypeEnum::USER->value => EmployeeDeviceTypeEnum::USER->name(),
-                    ]),
+                    Forms\Components\Select::make("role")->options(EmployeeDeviceRoleEnum::values()),
                     Forms\Components\TextInput::make("userid")->label("ID المستخدم")->required()->unique(ignoreRecord: true),
 
                     Forms\Components\TextInput::make("uid")->label("uid")->unique(ignoreRecord: true),
@@ -52,11 +49,7 @@ class EmployeeResource extends Resource
 //                    Forms\Components\TextInput::make("cardno")->label("cardno")->unique(ignoreRecord: true),
 
 
-                    Forms\Components\Select::make("permanence_type")->options([
-                        PermanenceTypeEnum::ADMINISTRATIVE->value => PermanenceTypeEnum::ADMINISTRATIVE->name(),
-                        PermanenceTypeEnum::SHIFT->value => PermanenceTypeEnum::SHIFT->name(),
-                        PermanenceTypeEnum::CONSTANT->value => PermanenceTypeEnum::CONSTANT->name(),
-                    ])->required()->label("نوع الدوام")->reactive()->afterStateUpdated(fn(callable $set) => $set("salary_id", null)),
+                    Forms\Components\Select::make("permanence_type")->options(PermanenceTypeEnum::values()->all())->required()->label("نوع الدوام")->reactive()->afterStateUpdated(fn(callable $set) => $set("salary_id", null)),
 
                     Forms\Components\Select::make("salary_id")->options(function (callable $get) {
                         $data = [];
@@ -79,7 +72,13 @@ class EmployeeResource extends Resource
                 Tables\Columns\TextColumn::make("name")->label("اسم الموضف ")->searchable()->sortable(),
                 Tables\Columns\TextColumn::make("uid")->label("uid")->searchable(),
                 Tables\Columns\TextColumn::make("userid")->label("userid")->sortable()->searchable(),
-                Tables\Columns\TextColumn::make("role")->label("role"),
+
+                Tables\Columns\BadgeColumn::make("role")
+                    ->formatStateUsing(fn($state) => EmployeeDeviceRoleEnum::tryFrom($state)->name())
+                    ->colors(EmployeeDeviceRoleEnum::colors()->all())
+                    ->label("صلاحية الموظف"),
+
+
                 Tables\Columns\TextColumn::make("bank_no")->label("password"),
                 Tables\Columns\BadgeColumn::make('salary_id')->formatStateUsing(function ($state) {
                     if (!is_null($state)) {

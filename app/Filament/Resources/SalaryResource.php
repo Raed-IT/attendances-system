@@ -22,7 +22,7 @@ class SalaryResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-collection';
     protected static ?string $label = 'راتب';
     protected static ?string $pluralLabel = 'انواع الرواتب   ';
-    protected static ?string $navigationGroup=" الرواتب";
+    protected static ?string $navigationGroup = " الرواتب";
 
     public static function form(Form $form): Form
     {
@@ -35,11 +35,7 @@ class SalaryResource extends Resource
                         ->required()->label("اجور الموظف ")
                         ->helperText('اجور الموظف بحسب الدوام المجدد '),
 
-                    Forms\Components\Select::make("type")->options([
-                        \App\Enums\PermanenceTypeEnum::ADMINISTRATIVE->value => \App\Enums\PermanenceTypeEnum::ADMINISTRATIVE->name(),
-                        \App\Enums\PermanenceTypeEnum::SHIFT->value => \App\Enums\PermanenceTypeEnum::SHIFT->name(),
-                        \App\Enums\PermanenceTypeEnum::CONSTANT->value => \App\Enums\PermanenceTypeEnum::CONSTANT->name(),
-                    ])->required()->label("نوع الدوام")->reactive(),
+                    Forms\Components\Select::make("type")->options(PermanenceTypeEnum::values()->all())->required()->label("نوع الدوام")->reactive(),
 
 
                     TextInput::make("count_of_shift")->label("عدد الساعات لكل اجر ")->hidden(function (callable $get) {
@@ -61,11 +57,7 @@ class SalaryResource extends Resource
                 Tables\Columns\TextColumn::make("price")->formatStateUsing(fn($state) => $state . " $ ")->label("اجور ")->sortable(),
                 Tables\Columns\BadgeColumn::make("type")
                     ->formatStateUsing(fn($state) => PermanenceTypeEnum::tryFrom($state)->name())
-                    ->colors([
-                        PermanenceTypeEnum::CONSTANT->color() => PermanenceTypeEnum::CONSTANT->value,
-                        PermanenceTypeEnum::SHIFT->color() => PermanenceTypeEnum::SHIFT->value,
-                        PermanenceTypeEnum::ADMINISTRATIVE->color() => PermanenceTypeEnum::ADMINISTRATIVE->value,
-                    ])
+                    ->colors(PermanenceTypeEnum::colors()->all())
                     ->label("نوع الدوام ")->sortable()->searchable(),
                 Tables\Columns\TextColumn::make("count_of_shift")->formatStateUsing(fn($state) => $state == null ? '' : $state . " ساعة ")->label("ساعة لاستحقاق اجر ")->sortable(),
 

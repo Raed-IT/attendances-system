@@ -36,7 +36,7 @@ class AttendanceResource extends Resource
                     Forms\Components\Select::make("user_id")->relationship("employee", "name")->searchable()->required(),
                     Forms\Components\DateTimePicker::make("timestamp")->required(),
                     Forms\Components\TextInput::make("state")->default(1),
-                    Forms\Components\Select::make("type")->options(AttendanceTypeEnum::values()),
+                    Forms\Components\Select::make("type")->options(AttendanceTypeEnum::values())->required(),
                 ])
             ]);
     }
@@ -54,7 +54,7 @@ class AttendanceResource extends Resource
                     ->formatStateUsing(fn($state) => AttendanceStateEnum::tryFrom(Util::getAttState($state))->name()),
                 Tables\Columns\BadgeColumn::make("type")
                     ->formatStateUsing(fn($state) => AttendanceTypeEnum::tryFrom($state)?->name())
-                    ->colors(fn()=>AttendanceTypeEnum::colors())
+                    ->colors(fn() => AttendanceTypeEnum::colors())
                     ->label("نوع"),
             ])
             ->filters([

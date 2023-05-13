@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\AttendanceTypeEnum;
+use App\Enums\EmployeeDeviceRoleEnum;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 
@@ -24,7 +25,7 @@ Route::get('/', function () {
 //       dd( $zk->getUser());
 //
 //    }
-    dd(AttendanceTypeEnum::colors());
+    dd(Carbon::now()->startOfMonth()->format("d-m-Y"));
 
     return redirect("/admin");
 

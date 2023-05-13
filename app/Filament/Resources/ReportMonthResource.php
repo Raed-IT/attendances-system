@@ -37,7 +37,10 @@ class ReportMonthResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make("id")->sortable()->label("ID"),
+                Tables\Columns\BadgeColumn::make("employee.name")->label("الموظف")->searchable(),
+                Tables\Columns\TextColumn::make("hours")->label("ساعات العمل "),
+                Tables\Columns\TextColumn::make("moth")->label("تقرير شهر ")->sortable(),
             ])
             ->filters([
                 //
