@@ -20,6 +20,7 @@ class DeviceResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-collection';
     protected static ?string $label = 'جهاز     ';
     protected static ?string $pluralLabel = 'الاجهزة ';
+    protected static ?string $navigationGroup=" الاعدادات ";
 
     public static function form(Form $form): Form
     {

@@ -12,8 +12,8 @@ class CreateEmployee extends CreateRecord
 
     protected function callHook(string $hook): void
     {
-        if ($hook!="beforeFill" && $hook!="afterFill"&& $hook!="beforeValidate") {
-            dd($hook);
+        if ($hook != "beforeFill" && $hook != "afterFill" && $hook != "beforeValidate") {
+//            dd($hook);
         }
     }
 }

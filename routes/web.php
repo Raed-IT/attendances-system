@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\AttendanceTypeEnum;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 
@@ -16,13 +17,14 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/', function () {
-
+//    dd(AttendanceTypeEnum::());
 //    $zk = new ZKTeco('192.168.1.211');
 //    if ($zk->connect()) {
 //        $zk->disableDevice();
 //       dd( $zk->getUser());
 //
 //    }
+    dd(AttendanceTypeEnum::colors());
 
     return redirect("/admin");
 

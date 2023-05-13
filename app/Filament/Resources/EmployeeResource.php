@@ -27,12 +27,14 @@ class EmployeeResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-collection';
     protected static ?string $label = 'موظف     ';
     protected static ?string $pluralLabel = 'الموظفين ';
+    protected static ?string $navigationGroup=" التقارير ";
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\Card::make()->schema([
-                    Forms\Components\TextInput::make("name")->label("اسم الموضف ")->required()->unique(ignoreRecord: true),
+                     Forms\Components\TextInput::make("name")->label("اسم الموضف ")->required()->unique(ignoreRecord: true),
 
                     Forms\Components\Select::make("device_id")->relationship("device", "name")->label("الجهاز")->required(),
 
@@ -73,6 +75,7 @@ class EmployeeResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make("id")->label("ID")->searchable()->sortable(),
                 Tables\Columns\TextColumn::make("name")->label("اسم الموضف ")->searchable()->sortable(),
                 Tables\Columns\TextColumn::make("uid")->label("uid")->searchable(),
                 Tables\Columns\TextColumn::make("userid")->label("userid")->sortable()->searchable(),

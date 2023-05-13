@@ -16,18 +16,28 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Rats\Zkteco\Lib\Helper\Util;
 use Filament\Tables\Filters\Filter;
+use Svg\Tag\Text;
+
 class AttendanceResource extends Resource
 {
     protected static ?string $model = Attendance::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
-    protected static ?string $label = 'التقرير     ';
-    protected static ?string $pluralLabel = 'جميع التقارير ';
+    protected static ?string $label = 'حركات الموظفين     ';
+    protected static ?string $pluralLabel = 'حركات الموظفين ';
+    protected static ?string $navigationGroup = " التقارير ";
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
+                Forms\Components\Card::make()->schema([
+                    Forms\Components\TextInput::make("uid")->required(),
+                    Forms\Components\Select::make("user_id")->relationship("employee", "name")->searchable()->required(),
+                    Forms\Components\DateTimePicker::make("timestamp")->required(),
+                    Forms\Components\TextInput::make("state")->default(1),
+                    Forms\Components\Select::make("type")->options(AttendanceTypeEnum::values()),
+                ])
             ]);
     }
 
@@ -35,6 +45,7 @@ class AttendanceResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make("id")->label("ID")->searchable(),
                 Tables\Columns\TextColumn::make("uid")->label("معرف البصمة")->searchable(),
                 Tables\Columns\BadgeColumn::make("employee.name")->label("الموظف")->searchable(),
                 Tables\Columns\TextColumn::make("user_id")->label("معرف الموظف")->searchable(),
@@ -42,11 +53,8 @@ class AttendanceResource extends Resource
                 Tables\Columns\BadgeColumn::make("state")->label("الحالة")
                     ->formatStateUsing(fn($state) => AttendanceStateEnum::tryFrom(Util::getAttState($state))->name()),
                 Tables\Columns\BadgeColumn::make("type")
-                    ->formatStateUsing(fn($state) => AttendanceTypeEnum::tryFrom(Util::getAttType($state))->name())
-                    ->colors([
-                        AttendanceTypeEnum::CHECK_OUT->color() => AttendanceTypeEnum::CHECK_OUT->value,
-                        AttendanceTypeEnum::CHECK_IN->color() => AttendanceTypeEnum::CHECK_IN->value,
-                    ])
+                    ->formatStateUsing(fn($state) => AttendanceTypeEnum::tryFrom($state)?->name())
+                    ->colors(fn()=>AttendanceTypeEnum::colors())
                     ->label("نوع"),
             ])
             ->filters([
@@ -59,11 +67,11 @@ class AttendanceResource extends Resource
                         return $query
                             ->when(
                                 $data['created_from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('timestamp', '>=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('timestamp', '>=', $date),
                             )
                             ->when(
                                 $data['created_until'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('timestamp', '<=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('timestamp', '<=', $date),
                             );
                     })
             ])

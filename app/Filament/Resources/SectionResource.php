@@ -19,6 +19,8 @@ class SectionResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-collection';
     protected static ?string $label = 'قسم';
     protected static ?string $pluralLabel = 'اقسام المؤسسة   ';
+    protected static ?string $navigationGroup = " الاعدادات ";
+
     public static function form(Form $form): Form
     {
         return $form

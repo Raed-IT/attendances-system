@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Enums;
+use MyCLabs\Enum\Enum;
 
 enum AttendanceStateEnum: string
 {
