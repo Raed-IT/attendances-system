@@ -8,6 +8,7 @@ use App\Filament\Resources\AttendanceMonthResource\Pages;
 use App\Filament\Resources\AttendanceMonthResource\RelationManagers;
 use App\Models\AttendanceMonth;
 use App\Models\Employee;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -29,6 +30,11 @@ class AttendanceMonthResource extends Resource
     protected static ?string $pluralLabel = '  حركات الموظفين لهذا الشهر ';
 
     protected static ?string $navigationGroup = " التقارير الشهرية";
+
+    protected static function getNavigationBadge(): ?string
+    {
+        return AttendanceMonth::count();
+    }
 
     public static function form(Form $form): Form
     {

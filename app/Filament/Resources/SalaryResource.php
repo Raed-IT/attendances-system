@@ -23,7 +23,10 @@ class SalaryResource extends Resource
     protected static ?string $label = 'راتب';
     protected static ?string $pluralLabel = 'انواع الرواتب   ';
     protected static ?string $navigationGroup = " الرواتب";
-
+    protected static function getNavigationBadge(): ?string
+    {
+        return Salary::count();
+    }
     public static function form(Form $form): Form
     {
         return $form

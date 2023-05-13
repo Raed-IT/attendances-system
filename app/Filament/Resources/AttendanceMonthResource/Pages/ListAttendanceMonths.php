@@ -17,9 +17,12 @@ class ListAttendanceMonths extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
-            Actions\Action::make("calc")->action(function () {
-                CalculateAttendances::calculateHoras();
-            })
+            Actions\Action::make("calc")
+                ->requiresConfirmation()
+                ->modalButton("تحليل")
+                ->action(function () {
+                    CalculateAttendances::calculateHoras();
+                })->label("تحليل بيانات الموظفين")
         ];
     }
 

@@ -5,7 +5,9 @@ namespace App\Helpers;
 use App\Models\Attendance;
 use App\Models\Employee;
 use App\Models\Report;
+use App\Traits\SendNotificationsTrait;
 use Carbon\Carbon;
+use Filament\Notifications\Notification;
 
 class CalculateAttendances
 {
@@ -45,7 +47,7 @@ class CalculateAttendances
                 "hours" => $totalHours,
             ]);
         }
-
-
+        $notification = Notification::make()->title("تم تحليل البيانات")->success();
+        $notification->send();
     }
 }

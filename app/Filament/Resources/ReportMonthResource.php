@@ -24,6 +24,10 @@ class ReportMonthResource extends Resource
 
     protected static ?string $navigationGroup = " التقارير الشهرية";
 
+    protected static function getNavigationBadge(): ?string
+    {
+        return ReportMonth::count();
+    }
 
     public static function form(Form $form): Form
     {
