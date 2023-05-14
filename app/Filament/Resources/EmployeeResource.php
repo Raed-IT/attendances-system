@@ -10,6 +10,7 @@ use App\Models\Employee;
 use App\Models\Salary;
 use App\Traits\SendNotificationsTrait;
 use Filament\Forms;
+use Filament\Forms\Components\Fieldset;
 use Filament\Notifications\Notification;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -17,6 +18,8 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Rats\Zkteco\Lib\ZKTeco;
 
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\Page;
 
 class EmployeeResource extends Resource
 {
@@ -31,22 +34,34 @@ class EmployeeResource extends Resource
 
     public static function form(Form $form): Form
     {
+
+
+
         return $form
             ->schema([
                 Forms\Components\Card::make()->schema([
-                    Forms\Components\TextInput::make("name")->label("اسم الموضف ")->required()->unique(ignoreRecord: true),
 
+                    Forms\Components\Card::make()
+                        ->schema(function (Page $livewire) {
+                            if ($livewire instanceof CreateRecord) {
+                                return [
+                                    Forms\Components\TextInput::make("name")->label("اسم الموضف ")->required(),//->unique(ignoreRecord: true),
+                                    Forms\Components\TextInput::make("uid")->label(" uid")->unique(ignoreRecord: true),];
+                            } else {
+                                return [
+                                    Forms\Components\TextInput::make("name")->label("اسم الموضف ")->required(),//->unique(ignoreRecord: true),
+                                    Forms\Components\Hidden::make("uid")->label(" uid")->unique(ignoreRecord: true),];
+                            }
+                        }),
                     Forms\Components\Select::make("device_id")->relationship("device", "name")->label("الجهاز")->required(),
 
                     Forms\Components\Select::make("role")->options(EmployeeDeviceRoleEnum::values()),
                     Forms\Components\TextInput::make("userid")->label("ID المستخدم")->required()->unique(ignoreRecord: true),
 
-                    Forms\Components\TextInput::make("uid")->label("uid")->unique(ignoreRecord: true),
-
 
                     Forms\Components\TextInput::make("password")->label("password")->unique(ignoreRecord: true),
 
-//                    Forms\Components\TextInput::make("cardno")->label("cardno")->unique(ignoreRecord: true),
+                    Forms\Components\TextInput::make("bank_no")->label("رقم بطاقة البنك")->unique(ignoreRecord: true),
 
 
                     Forms\Components\Select::make("permanence_type")->options(PermanenceTypeEnum::values()->all())->required()->label("نوع الدوام")->reactive()->afterStateUpdated(fn(callable $set) => $set("salary_id", null)),

@@ -11,7 +11,8 @@ class Employee extends Model
 {
     use HasFactory;
 
-    protected $guarded = ["section_id"];
+
+    protected $guarded = [];
 
     public function salary(): BelongsTo
     {

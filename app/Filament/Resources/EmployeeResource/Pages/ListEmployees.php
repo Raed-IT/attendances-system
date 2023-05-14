@@ -46,14 +46,17 @@ class ListEmployees extends ListRecords
 
     protected function syncEmployeeFromDevice($data)
     {
-         $zk = new ZKTeco($data["device_ip"]);
+        $zk = new ZKTeco($data["device_ip"]);
         if ($zk->connect()) {
             $zk->enableDevice();
             $employees = $zk->getUser();
             try {
                 foreach ($employees as $employee) {
-                    $employee['device_id']=$data['device_id'];
-                     Employee::updateOrCreate(["uid" => $employee["uid"]], $employee);
+                    $employee['device_id'] = $data['device_id'];
+                    Employee::updateOrCreate([
+                        "uid" => $employee["uid"],
+                        "userid" => $employee['userid']
+                    ], $employee);
                 }
                 $zk->disableDevice();
                 $this->notifyCurrentUser("تم مزامنة الموظفين", true, true);
@@ -66,4 +69,5 @@ class ListEmployees extends ListRecords
             Notification::make()->title("لم بتم الوصول الى الجهاز اكد من الاتصال ")->danger()->send();
         }
     }
+
 }

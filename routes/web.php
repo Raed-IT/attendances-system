@@ -30,7 +30,8 @@ Route::get('/', function () {
 //
 //    $diffInHours = \Carbon\Carbon::parse($startTime)->diffInRealMinutes($endTime, )/60;
 //    dd($diffInHours);
-
+    $d=array_values(  \App\Enums\PermanenceTypeEnum::cases() ->toArray());
+    dd($d);
     return redirect("/admin");
 
 });
