@@ -25,7 +25,11 @@ Route::get('/', function () {
 //       dd( $zk->getUser());
 //
 //    }
-    dd(Carbon::now()->startOfMonth()->format("d-m-Y"));
+//    $startTime = '2023-05-14 12:00:00';
+//    $endTime = '2023-05-14 14:30:00';
+//
+//    $diffInHours = \Carbon\Carbon::parse($startTime)->diffInRealMinutes($endTime, )/60;
+//    dd($diffInHours);
 
     return redirect("/admin");
 

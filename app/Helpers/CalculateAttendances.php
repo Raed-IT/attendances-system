@@ -13,15 +13,17 @@ class CalculateAttendances
 {
     static public function calculateHoras()
     {
-        $employees = Employee::whereHas("attendances")->get();
+        $employees = Employee::whereHas("attendances")->with("salary")->get();
 
         foreach ($employees as $employee) {
             $records = Attendance::whereUserId($employee->userid)->orderBy('timestamp')->get();
+
             $totalHours = 0;
             $lastInDate = null;
             $calcLastCheckOut = false;
 
             foreach ($records as $record) {
+//                dd($record->employee->salary);
                 if ($record->type == 0) {
 
                     $calcLastCheckOut = false;
@@ -34,7 +36,7 @@ class CalculateAttendances
                     if ($calcLastCheckOut == false) {
                         $calcLastCheckOut = true;
                         $outDate = Carbon::parse($record->timestamp);
-                        $hours = $outDate->diffInHours($lastInDate);
+                        $hours = $outDate->diffInMinutes($lastInDate) / 60;
                         // Add the hours to the total attended by the employee
                         $totalHours += $hours;
                     }
@@ -49,5 +51,6 @@ class CalculateAttendances
         }
         $notification = Notification::make()->title("تم تحليل البيانات")->success();
         $notification->send();
+        return redirect("http://attendances.test/admin/report-months");
     }
 }

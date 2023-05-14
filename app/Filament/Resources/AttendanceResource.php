@@ -7,6 +7,7 @@ use App\Enums\AttendanceTypeEnum;
 use App\Filament\Resources\AttendanceResource\Pages;
 use App\Filament\Resources\AttendanceResource\RelationManagers;
 use App\Models\Attendance;
+use App\Models\Employee;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -32,11 +33,22 @@ class AttendanceResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Card::make()->schema([
-                    Forms\Components\TextInput::make("uid")->required(),
-                    Forms\Components\Select::make("user_id")->relationship("employee", "name")->searchable()->required(),
+
+                    Forms\Components\Hidden::make("uid")->required(),
+
+                    Forms\Components\Select::make("user_id")->relationship("employee", "name")
+                        ->searchable()->required()->preload()->reactive()
+                        ->afterStateUpdated(function (callable $get, callable $set) {
+                            $employee = Employee::whereUserid($get("user_id"))->first();
+                            $set("uid", $employee->uid);
+                        }),
+
                     Forms\Components\DateTimePicker::make("timestamp")->required(),
+
                     Forms\Components\TextInput::make("state")->default(1),
+
                     Forms\Components\Select::make("type")->options(AttendanceTypeEnum::values())->required(),
+
                 ])
             ]);
     }

@@ -74,12 +74,12 @@ class EmployeeResource extends Resource
                 Tables\Columns\TextColumn::make("userid")->label("userid")->sortable()->searchable(),
 
                 Tables\Columns\BadgeColumn::make("role")
-                    ->formatStateUsing(fn($state) => EmployeeDeviceRoleEnum::tryFrom($state)->name())
+                    ->formatStateUsing(fn($state) => EmployeeDeviceRoleEnum::tryFrom($state)?->name())
                     ->colors(EmployeeDeviceRoleEnum::colors()->all())
-                    ->label("صلاحية الموظف"),
+                    ->label("صلاحية الموظف")->sortable(),
 
 
-                Tables\Columns\TextColumn::make("bank_no")->label("password"),
+                Tables\Columns\TextColumn::make("bank_no")->label("رقم البنك"),
                 Tables\Columns\BadgeColumn::make('salary_id')->formatStateUsing(function ($state) {
                     if (!is_null($state)) {
                         $salary = Salary::find($state);
