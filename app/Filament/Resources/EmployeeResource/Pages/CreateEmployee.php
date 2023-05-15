@@ -32,7 +32,7 @@ class CreateEmployee extends CreateRecord
 //                    dd($this->data);
                     if ($zk->connect()) {
                         $zk->enableDevice();
-                        $zk->setUser($this->data['uid'], $this->data['userid'], $this->data["name"], 0000, $this->data["role"],"");
+                        $zk->setUser($this->data['uid'], $this->data['userid'], $this->data["name"], 123123, $this->data["role"]);
                         $this->create();
                         $zk->disableDevice();
                     } else {
