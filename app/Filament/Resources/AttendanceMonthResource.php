@@ -66,7 +66,7 @@ class AttendanceMonthResource extends Resource
                 Tables\Columns\TextColumn::make("user_id")->label("معرف الموظف")->searchable(),
                 Tables\Columns\TextColumn::make("timestamp")->label("تاريخ البصم")->sortable(),
                 Tables\Columns\BadgeColumn::make("state")->label("الحالة")
-                    ->formatStateUsing(fn($state) => AttendanceStateEnum::tryFrom(Util::getAttState($state))->name()),
+                    ->formatStateUsing(fn($state) => AttendanceStateEnum::tryFrom(Util::getAttState($state))?->name()),
                 Tables\Columns\BadgeColumn::make("type")
                     ->formatStateUsing(fn($state) => AttendanceTypeEnum::tryFrom($state)?->name())
                     ->colors(fn() => AttendanceTypeEnum::colors())
