@@ -85,8 +85,8 @@ class EmployeeResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make("id")->label("ID")->searchable()->sortable(),
                 Tables\Columns\TextColumn::make("name")->label("اسم الموضف ")->searchable()->sortable(),
-                Tables\Columns\TextColumn::make("uid")->label("uid")->searchable(),
-                Tables\Columns\TextColumn::make("userid")->label("userid")->sortable()->searchable(),
+//                Tables\Columns\TextColumn::make("uid")->label("uid")->searchable(),
+                Tables\Columns\TextColumn::make("userid")->label("معرف الموظف ")->sortable()->searchable(),
 
                 Tables\Columns\BadgeColumn::make("role")
                     ->formatStateUsing(fn($state) => EmployeeDeviceRoleEnum::tryFrom($state)?->name())

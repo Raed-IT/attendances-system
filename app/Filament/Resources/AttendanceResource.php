@@ -58,7 +58,7 @@ class AttendanceResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make("id")->label("ID")->searchable(),
-                Tables\Columns\TextColumn::make("uid")->label("معرف البصمة")->searchable(),
+//                Tables\Columns\TextColumn::make("uid")->label("معرف البصمة")->searchable(),
                 Tables\Columns\BadgeColumn::make("employee.name")->label("الموظف")->searchable(),
                 Tables\Columns\TextColumn::make("user_id")->label("معرف الموظف")->searchable(),
                 Tables\Columns\TextColumn::make("timestamp")->label("تاريخ البصم")->sortable(),
@@ -88,7 +88,7 @@ class AttendanceResource extends Resource
                     })
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+//                Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
