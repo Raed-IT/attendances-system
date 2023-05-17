@@ -30,7 +30,7 @@ class EditEmployee extends EditRecord
                     $device = Device::find($this->data['device_id']);
                     $zk = new ZKTeco($device->ip);
                     if ($zk->connect()) {
-                        $zk->setUser($this->data['uid'], $this->data['userid'], $this->data["name"], 0000);
+                        $zk->setUser($this->data['uid'], $this->data['userid'], $this->data["name"], $this->data['password'] == "" ?? 123123123, $this->data['role'],);
                         $this->save();
                     } else {
                         Notification::make()->title("فشل الاتصال ");

@@ -36,7 +36,6 @@ class EmployeeResource extends Resource
     {
 
 
-
         return $form
             ->schema([
                 Forms\Components\Card::make()->schema([
@@ -59,7 +58,7 @@ class EmployeeResource extends Resource
                     Forms\Components\TextInput::make("userid")->label("ID المستخدم")->required()->unique(ignoreRecord: true),
 
 
-                    Forms\Components\TextInput::make("password")->label("password")->unique(ignoreRecord: true),
+                    Forms\Components\TextInput::make("password")->label("كلمة السر"),
 
                     Forms\Components\TextInput::make("bank_no")->label("رقم بطاقة البنك")->unique(ignoreRecord: true),
 
