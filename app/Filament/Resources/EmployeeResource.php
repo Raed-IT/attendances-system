@@ -16,6 +16,8 @@ use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Tables\Actions\BulkAction;
+use Illuminate\Support\Collection;
 use Rats\Zkteco\Lib\ZKTeco;
 
 use Filament\Resources\Pages\CreateRecord;
@@ -116,38 +118,37 @@ class EmployeeResource extends Resource
 
             ])
             ->bulkActions([
-//                BulkAction::make('delete')
-//                    ->requiresConfirmation()
-//                    ->action(function (Collection $records) {
-//
-//                        $zk = new ZKTeco("192.168.1.211");
-//                        if ($zk->connect()) {
-//                            $zk->enableDevice();
-//                            $count = count($records);
-//                            try {
-//                                foreach ($records as $record) {
-//                                    $zk->removeUser($record->uid);
-//                                    $record->delete();
-//                                }
-//                                $notification = Notification::make()->title("تم حذف " . $count . " موظف ")->success();
-//                                $notification->send();
-//                                $notification->toDatabase();
-//                                $zk->disableDevice();
-//                            } catch (\Exception $e) {
-//                                $notification = Notification::make()->title("تم فشل في الحذف ")->success();
-//                                $notification->send();
-//                                $notification->toDatabase();
-//
-//
-//                                $zk->disableDevice();
-//                            }
-//                        } else {
-//                            $notification = Notification::make()->title("لايوجد اتصال ")->success();
-//                            $notification->send();
-//                            $notification->toDatabase();
-//
-//                        }
-//                    })
+                BulkAction::make('delete')
+                    ->requiresConfirmation()
+                    ->action(function (Collection $records) {
+                        $zk = new ZKTeco("192.168.1.211");
+                        if ($zk->connect()) {
+                            $zk->enableDevice();
+                            $count = count($records);
+                            try {
+                                foreach ($records as $record) {
+                                    $zk->removeUser($record->uid);
+                                    $record->delete();
+                                }
+                                $notification = Notification::make()->title("تم حذف " . $count . " موظف ")->success();
+                                $notification->send();
+                                $notification->toDatabase();
+                                $zk->disableDevice();
+                            } catch (\Exception $e) {
+                                $notification = Notification::make()->title("تم فشل في الحذف ")->success();
+                                $notification->send();
+                                $notification->toDatabase();
+
+
+                                $zk->disableDevice();
+                            }
+                        } else {
+                            $notification = Notification::make()->title("لايوجد اتصال ")->success();
+                            $notification->send();
+                            $notification->toDatabase();
+
+                        }
+                    })
             ]);
     }
 
