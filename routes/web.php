@@ -4,6 +4,7 @@ use App\Enums\AttendanceTypeEnum;
 use App\Enums\EmployeeDeviceRoleEnum;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
+use Rats\Zkteco\Lib\ZKTeco;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,7 +23,7 @@ Route::get('/', function () {
 //    $zk = new ZKTeco('192.168.1.211');
 //    if ($zk->connect()) {
 //        $zk->disableDevice();
-//       dd( $zk->getUser());
+//       dd( $zk->getAttendance());
 //
 //    }
 //    $startTime = '2023-05-14 12:00:00';
@@ -32,6 +33,8 @@ Route::get('/', function () {
 //    dd($diffInHours);
 //    $d=array_values(  \App\Enums\PermanenceTypeEnum::cases() ->toArray());
 //    dd($d);
+
+
     return redirect("/admin");
 
 });

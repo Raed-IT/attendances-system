@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\EmployeeResource\Pages;
 
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Resources\EmployeeResource;
 use App\Models\Device;
 use App\Models\Employee;
@@ -41,6 +42,15 @@ class ListEmployees extends ListRecords
                 ->color("success")->action(function ($data) {
                     $this->syncEmployeeFromDevice($data);
                 }),
+        ];
+    }
+
+    protected function getTableHeaderActions(): array
+    {
+        return [
+
+            FilamentExportHeaderAction::make('Export')->label("تصدير البيانات ")->button()->color("danger"),
+
         ];
     }
 

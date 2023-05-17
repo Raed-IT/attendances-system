@@ -17,6 +17,8 @@ use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
 use Rats\Zkteco\Lib\ZKTeco;
 
@@ -54,7 +56,9 @@ class EmployeeResource extends Resource
                                     Forms\Components\Hidden::make("uid")->label(" uid")->unique(ignoreRecord: true),];
                             }
                         }),
+
                     Forms\Components\Select::make("device_id")->relationship("device", "name")->label("الجهاز")->required(),
+                    Forms\Components\Select::make("section_id")->relationship("section", "name")->label("القسم")->required(),
 
                     Forms\Components\Select::make("role")->options(EmployeeDeviceRoleEnum::values()),
                     Forms\Components\TextInput::make("userid")->label("ID المستخدم")->required()->unique(ignoreRecord: true),
@@ -98,18 +102,30 @@ class EmployeeResource extends Resource
                 Tables\Columns\BadgeColumn::make('salary_id')->formatStateUsing(function ($state) {
                     if (!is_null($state)) {
                         $salary = Salary::find($state);
-                        return PermanenceTypeEnum::tryFrom($salary->type)->name() . ' ' . $salary->count_of_shift . "ساعة " . $salary->price . "$";
+                        return PermanenceTypeEnum::tryFrom($salary->type)->name() . '  ' . $salary->count_of_shift . "ساعة " . $salary->price . "$";
                     }
                     return "";
                 })->label('نوع الراتب')->sortable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('section_id')
+                    ->relationship("section", "name")->label("فلتر بحسب القسم "),
+                SelectFilter::make('salary_id')
+                    ->options(function () {
+                        $data = [];
+                        $salaries = Salary::all();
+                        foreach ($salaries as $salary) {
+                            $data += [$salary->id => PermanenceTypeEnum::tryFrom($salary->type)->name() . "  " . $salary->count_of_shift . "ساعة" . $salary->price . "$"];
+                        }
+                        return $data;
+                    })->label("فلتر بحسب الراتب ")
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make("delete")
                     ->requiresConfirmation()
+                    ->modalSubheading(fn(Employee $record) => "سيتم حذف الموضف " . $record->name)
                     ->action(function (Employee $record) {
                         self:: removeEmployee($record);
                     })
