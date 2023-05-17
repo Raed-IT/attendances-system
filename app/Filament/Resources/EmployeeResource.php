@@ -85,7 +85,7 @@ class EmployeeResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make("id")->label("ID")->searchable()->sortable(),
-                Tables\Columns\TextColumn::make("name")->label("اسم الموضف ")->searchable()->sortable(),
+                Tables\Columns\TextColumn::make("name")->label("اسم الموضف ")->searchable()->sortable()->copyable(),
 //                Tables\Columns\TextColumn::make("uid")->label("uid")->searchable(),
                 Tables\Columns\BadgeColumn::make("device.name")->label("البصامة")->sortable(),
                 Tables\Columns\BadgeColumn::make("role")
@@ -138,8 +138,6 @@ class EmployeeResource extends Resource
                                 $notification = Notification::make()->title("تم فشل في الحذف ")->success();
                                 $notification->send();
                                 $notification->toDatabase();
-
-
                                 $zk->disableDevice();
                             }
                         } else {
