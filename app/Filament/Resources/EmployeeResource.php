@@ -86,7 +86,6 @@ class EmployeeResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make("id")->label("ID")->searchable()->sortable(),
                 Tables\Columns\TextColumn::make("name")->label("اسم الموضف ")->searchable()->sortable()->copyable(),
-//                Tables\Columns\TextColumn::make("uid")->label("uid")->searchable(),
                 Tables\Columns\BadgeColumn::make("device.name")->label("البصامة")->sortable(),
                 Tables\Columns\BadgeColumn::make("role")
                     ->formatStateUsing(fn($state) => EmployeeDeviceRoleEnum::tryFrom($state)?->name())
@@ -120,8 +119,14 @@ class EmployeeResource extends Resource
             ->bulkActions([
                 BulkAction::make('delete')
                     ->requiresConfirmation()
-                    ->action(function (Collection $records) {
-                        $zk = new ZKTeco("192.168.1.211");
+                    ->form([
+                        Forms\Components\Select::make("deviceId")->options(function () {
+                            return Device::all()->pluck("name", "id");
+                        })->label("البصامة")->required()
+                    ])
+                    ->action(function (Collection $records, $data) {
+                        $device = Device::find($data['deviceId']);
+                        $zk = new ZKTeco($device->ip);
                         if ($zk->connect()) {
                             $zk->enableDevice();
                             $count = count($records);
