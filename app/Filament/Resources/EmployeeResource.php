@@ -11,6 +11,7 @@ use App\Models\Salary;
 use App\Traits\SendNotificationsTrait;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\TextInput\Mask;
 use Filament\Notifications\Notification;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -51,27 +52,39 @@ class EmployeeResource extends Resource
                             if ($livewire instanceof CreateRecord) {
                                 return [
                                     Forms\Components\TextInput::make("name")->label("اسم الموضف ")->required(),//->unique(ignoreRecord: true),
-                                    Forms\Components\TextInput::make("uid")->label(" uid")->unique(ignoreRecord: true),];
+
+                                    Forms\Components\TextInput::make("uid")->label(" uid")->unique(ignoreRecord: true)
+                                        ->numeric()->maxValue(65000)->minValue(1)->mask(fn(Mask $mask) => $mask->numeric()),
+                                ];
                             } else {
                                 return [
                                     Forms\Components\TextInput::make("name")->label("اسم الموضف ")->required(),//->unique(ignoreRecord: true),
+
                                     Forms\Components\Hidden::make("uid")->label(" uid")->unique(ignoreRecord: true),];
                             }
                         }),
 
-                    Forms\Components\Select::make("device_id")->relationship("device", "name")->label("الجهاز")->required(),
-                    Forms\Components\Select::make("section_id")->relationship("section", "name")->label("القسم")->required(),
+                    Forms\Components\Select::make("device_id")
+                        ->relationship("device", "name")->label("الجهاز")->required(),
 
-                    Forms\Components\Select::make("role")->options(EmployeeDeviceRoleEnum::values()),
-                    Forms\Components\TextInput::make("userid")->label("ID المستخدم")->required()->unique(ignoreRecord: true)->maxValue(99999999),
+                    Forms\Components\Select::make("section_id")
+                        ->relationship("section", "name")->label("القسم")->required(),
+
+                    Forms\Components\Select::make("role")->options(EmployeeDeviceRoleEnum::values())->default(EmployeeDeviceRoleEnum::USER->value),
+
+                    Forms\Components\TextInput::make("userid")->label("ID المستخدم")
+                        ->required()->unique(ignoreRecord: true)->maxLength(8)->numeric()->mask(fn(Mask $mask) => $mask->numeric()),
 
 
-                    Forms\Components\TextInput::make("password")->label("كلمة السر"),
+                    Forms\Components\TextInput::make("password")->label("كلمة السر")->mask(fn(Mask $mask) => $mask->numeric())->maxLength(8),
 
-                    Forms\Components\TextInput::make("bank_no")->label("رقم بطاقة البنك")->unique(ignoreRecord: true),
+                    Forms\Components\TextInput::make("bank_no")->label("رقم بطاقة البنك")
+                        ->unique(ignoreRecord: true)->mask(fn(Mask $mask) => $mask->numeric()),
 
 
-                    Forms\Components\Select::make("permanence_type")->options(PermanenceTypeEnum::values()->all())->required()->label("نوع الدوام")->reactive()->afterStateUpdated(fn(callable $set) => $set("salary_id", null)),
+                    Forms\Components\Select::make("permanence_type")
+                        ->options(PermanenceTypeEnum::values()->all())->required()->label("نوع الدوام")
+                        ->reactive()->afterStateUpdated(fn(callable $set) => $set("salary_id", null)),
 
                     Forms\Components\Select::make("salary_id")->options(function (callable $get) {
                         $data = [];

@@ -29,15 +29,16 @@ class CreateEmployee extends CreateRecord
                 ->action(function () {
                     $device =Device::find($this->data["device_id"]);
                     $zk = new ZKTeco($device->ip);
-//                    dd($this->data);
                     if ($zk->connect()) {
                         $zk->enableDevice();
-                        $zk->setUser($this->data['uid'], $this->data['userid'], $this->data["name"], 123123, $this->data["role"]);
+                        $zk->setUser($this->data['uid'], $this->data['userid'], $this->data["name"], $this->data["password"]??123123, $this->data["role"]);
                         $this->create();
                         $zk->disableDevice();
                     } else {
                         Notification::make()->title("فشل الاتصال ");
                     }
+                    $this->create();
+
                 }),
 
         ];
