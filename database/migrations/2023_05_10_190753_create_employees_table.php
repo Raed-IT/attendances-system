@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->string("cardno")->nullable();
             $table->string("name")->nullable();
             $table->boolean("has_fingerprint")->default(false);
-            $table->integer("bank_no")->nullable();
+            $table->bigInteger("bank_no")->nullable();
             $table->foreignId("salary_id")->nullable()->constrained('salaries')->nullOnDelete();
             $table->enum("permanence_type", [
                 \App\Enums\PermanenceTypeEnum::ADMINISTRATIVE->value,

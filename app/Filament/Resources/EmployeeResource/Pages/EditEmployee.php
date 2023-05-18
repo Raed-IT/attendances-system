@@ -35,7 +35,6 @@ class EditEmployee extends EditRecord
                     } else {
                         Notification::make()->title("فشل الاتصال ");
                     }
-                    $this->save();
                 }),
             $this->getCancelFormAction(),
         ];

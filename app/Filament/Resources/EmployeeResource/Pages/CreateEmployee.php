@@ -37,7 +37,6 @@ class CreateEmployee extends CreateRecord
                     } else {
                         Notification::make()->title("فشل الاتصال ");
                     }
-                    $this->create();
 
                 }),
 
