@@ -22,9 +22,9 @@ Route::get('/', function () {
 //    dd(AttendanceTypeEnum::());
 //    $zk = new ZKTeco('192.168.1.211');
 //    if ($zk->connect()) {
+//        $zk->enableDevice();
+//        $zk->clearUsers();
 //        $zk->disableDevice();
-//       dd( $zk->getAttendance());
-//
 //    }
 //    $startTime = '2023-05-14 12:00:00';
 //    $endTime = '2023-05-14 14:30:00';

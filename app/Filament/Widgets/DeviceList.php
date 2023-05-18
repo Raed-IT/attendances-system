@@ -79,6 +79,21 @@ class DeviceList extends BaseWidget
                     }
                     )
                     ->color("danger"),
+                Action::make('celar users ')
+                    ->label('مسح جميع المستخدمين')
+                    ->action(function (Device $record) {
+                        $zk = new ZKTeco($record->ip);
+                        if ($zk->connect()) {
+                            $zk->deviceName();
+                            $zk->clearUsers();
+                            $zk->disableDevice();
+                            Notification::make()->title("تم مسح المستخدمين من الجهاز")->success()->send()->toDatabase();
+                        } else {
+                            Notification::make()->title("لم يتم الاتصال بالجهاز")->danger()->send()->toDatabase();
+                        }
+                    }
+                    )->requiresConfirmation()
+                    ->color("danger"),
             ]),
         ];
     }

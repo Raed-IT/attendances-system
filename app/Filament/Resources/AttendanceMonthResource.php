@@ -61,7 +61,6 @@ class AttendanceMonthResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make("id")->label("ID")->searchable(),
-//                Tables\Columns\TextColumn::make("uid")->label("معرف البصمة")->searchable(),
                 Tables\Columns\BadgeColumn::make("employee.name")->label("الموظف")->searchable(),
                 Tables\Columns\TextColumn::make("user_id")->label("معرف الموظف")->searchable(),
                 Tables\Columns\TextColumn::make("timestamp")->label("تاريخ البصم")->sortable(),
@@ -75,6 +74,8 @@ class AttendanceMonthResource extends Resource
             ->filters([
                 SelectFilter::make("user_id")
                     ->options(Employee::all()->pluck("name", "userid"))->searchable()->label("الموظف "),
+
+                SelectFilter::make("type")->options(collect(AttendanceTypeEnum::cases())->pluck("name", "value")),
 
                 Filter::make('timestamp')
                     ->form([

@@ -17,7 +17,9 @@ use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
 use Rats\Zkteco\Lib\ZKTeco;
@@ -61,7 +63,7 @@ class EmployeeResource extends Resource
                     Forms\Components\Select::make("section_id")->relationship("section", "name")->label("القسم")->required(),
 
                     Forms\Components\Select::make("role")->options(EmployeeDeviceRoleEnum::values()),
-                    Forms\Components\TextInput::make("userid")->label("ID المستخدم")->required()->unique(ignoreRecord: true),
+                    Forms\Components\TextInput::make("userid")->label("ID المستخدم")->required()->unique(ignoreRecord: true)->maxValue(99999999),
 
 
                     Forms\Components\TextInput::make("password")->label("كلمة السر"),
@@ -97,6 +99,7 @@ class EmployeeResource extends Resource
                     ->label("صلاحية الموظف")->sortable(),
 
                 Tables\Columns\TextColumn::make("userid")->label("معرف الموظف ")->sortable()->searchable(),
+                Tables\Columns\IconColumn::make("has_fingerprint")->label("يملك بصمة")->boolean(),
 
 
                 Tables\Columns\BadgeColumn::make('salary_id')->formatStateUsing(function ($state) {
@@ -108,6 +111,7 @@ class EmployeeResource extends Resource
                 })->label('نوع الراتب')->sortable(),
             ])
             ->filters([
+                TernaryFilter::make('has_fingerprint')->label('يملك بصمة'),
                 SelectFilter::make('section_id')
                     ->relationship("section", "name")->label("فلتر بحسب القسم "),
                 SelectFilter::make('salary_id')
@@ -138,7 +142,8 @@ class EmployeeResource extends Resource
                     ->form([
                         Forms\Components\Select::make("deviceId")->options(function () {
                             return Device::all()->pluck("name", "id");
-                        })->label("البصامة")->required()
+                        })->label("البصامة")->required(),
+
                     ])
                     ->action(function (Collection $records, $data) {
                         $device = Device::find($data['deviceId']);

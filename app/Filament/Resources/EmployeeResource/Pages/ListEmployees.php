@@ -37,6 +37,7 @@ class ListEmployees extends ListRecords
                                 $set("device_id", $device->id);
                             }
                         }),
+                    Checkbox::make("check_finger_print")->label("التحقق من بصمة الاصبع")->default(false),
                     Hidden::make("device_id"),
                 ])
                 ->color("success")->action(function ($data) {
@@ -63,6 +64,15 @@ class ListEmployees extends ListRecords
             try {
                 foreach ($employees as $employee) {
                     $employee['device_id'] = $data['device_id'];
+
+                    if ($data["check_finger_print"]) {
+                        if (!empty($zk->getFingerprint($employee["uid"]))) {
+                            $employee["has_fingerprint"] = true;
+                        } else {
+                            $employee["has_fingerprint"] = false;
+                        }
+                    }
+
                     Employee::updateOrCreate([
                         "uid" => $employee["uid"],
                         "userid" => $employee['userid']
