@@ -14,8 +14,8 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\User::factory(10)->create();
         $this->call([
-            SectionSeeder::class,
-            SalarySeeder::class,
+//            SectionSeeder::class,
+//            SalarySeeder::class,
             AdminSeeder::class,
             DeviceSeeder::class]);
         // \App\Models\User::factory()->create([
