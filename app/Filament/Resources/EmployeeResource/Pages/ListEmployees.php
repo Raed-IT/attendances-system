@@ -58,11 +58,12 @@ class ListEmployees extends ListRecords
     protected function syncEmployeeFromDevice($data)
     {
         $zk = new ZKTeco($data["device_ip"]);
+        $notificationsErrors = [];
         if ($zk->connect()) {
             $zk->enableDevice();
             $employees = $zk->getUser();
-            try {
-                foreach ($employees as $employee) {
+            foreach ($employees as $employee) {
+                try {
                     $employee['device_id'] = $data['device_id'];
 
                     if ($data["check_finger_print"]) {
@@ -75,15 +76,24 @@ class ListEmployees extends ListRecords
 
                     Employee::updateOrCreate([
                         "uid" => $employee["uid"],
-                        "userid" => $employee['userid']
+                        "userid" => $employee['userid'],
+                        "device_id" =>  $employee['device_id'],
                     ], $employee);
+                } catch (\Exception $e) {
+                    array_push($notificationsErrors, Notification::make()->title(" فشل  مزامنة الموظفين" . $employee['userid'])->danger());
+
                 }
-                $zk->disableDevice();
-                $this->notifyCurrentUser("تم مزامنة الموظفين", true, true);
-            } catch (\Exception $e) {
-                info($e);
-                $zk->disableDevice();
-                Notification::make()->title(" فشل  مزامنة الموظفين")->danger()->send();
+
+
+            }
+            $zk->disableDevice();
+
+            if (!empty($notificationsErrors)){
+                $notificationsErrors[0]->send()->toDatabase();
+                foreach ($notificationsErrors as $notification )
+                {
+                    $notification->sendToDatabase(auth()->user());
+                }
             }
         } else {
             Notification::make()->title("لم بتم الوصول الى الجهاز اكد من الاتصال ")->danger()->send();

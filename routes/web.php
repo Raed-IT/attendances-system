@@ -20,10 +20,10 @@ use Rats\Zkteco\Lib\ZKTeco;
 
 Route::get('/', function () {
 //    dd(AttendanceTypeEnum::());
-//    $zk = new ZKTeco('192.168.1.211');
+    $zk = new ZKTeco('192.168.1.211');
 //    if ($zk->connect()) {
 //        $zk->enableDevice();
-//        $zk->clearUsers();
+//        dd($zk->getAttendance());
 //        $zk->disableDevice();
 //    }
 //    $startTime = '2023-05-14 12:00:00';

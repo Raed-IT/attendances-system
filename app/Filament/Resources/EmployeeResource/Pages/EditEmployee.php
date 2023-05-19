@@ -8,6 +8,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Pages\Actions\Action;
+use Filament\Resources\Resource;
 use Rats\Zkteco\Lib\ZKTeco;
 
 class EditEmployee extends EditRecord
@@ -21,6 +22,7 @@ class EditEmployee extends EditRecord
         ];
     }
 
+
     protected function getFormActions(): array
     {
         return [
@@ -30,8 +32,9 @@ class EditEmployee extends EditRecord
                     $device = Device::find($this->data['device_id']);
                     $zk = new ZKTeco($device->ip);
                     if ($zk->connect()) {
-                        $zk->setUser($this->data['uid'], $this->data['userid'], $this->data["name"], $this->data['password'] ?? 123123, $this->data['role'],);
+                        $zk->setUser($this->data['uid'], $this->data['userid'], $this->data["name"], $this->data['password'] ?? 123123, $this->data['role']);
                         $this->save();
+                        $this->redirect(EmployeeResource::getUrl("index"));
                     } else {
                         Notification::make()->title("فشل الاتصال ");
                     }

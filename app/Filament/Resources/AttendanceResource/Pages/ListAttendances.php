@@ -64,7 +64,7 @@ class ListAttendances extends ListRecords
                     Attendance::updateOrCreate(['timestamp' => $attendance['timestamp'], "uid" => $attendance['uid']], $data);
                 } catch (\Exception $e) {
                     $zk->disableDevice();
-                    $this->notifyCurrentUser("فشل مزامنة مزامنة الموظفين" . $attendance["uid"], true);
+                    $this->notifyCurrentUser("فشل مزامنة مزامنة الموظفين" . $attendance["id"], true);
                 }
             }
             $zk->disableDevice();
