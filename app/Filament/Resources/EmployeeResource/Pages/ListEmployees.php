@@ -49,9 +49,7 @@ class ListEmployees extends ListRecords
     protected function getTableHeaderActions(): array
     {
         return [
-
             FilamentExportHeaderAction::make('Export')->label("تصدير البيانات ")->button()->color("danger"),
-
         ];
     }
 
@@ -77,7 +75,7 @@ class ListEmployees extends ListRecords
                     Employee::updateOrCreate([
                         "uid" => $employee["uid"],
                         "userid" => $employee['userid'],
-                        "device_id" =>  $employee['device_id'],
+                        "device_id" => $employee['device_id'],
                     ], $employee);
                 } catch (\Exception $e) {
                     array_push($notificationsErrors, Notification::make()->title(" فشل  مزامنة الموظفين" . $employee['userid'])->danger());
@@ -88,10 +86,9 @@ class ListEmployees extends ListRecords
             }
             $zk->disableDevice();
 
-            if (!empty($notificationsErrors)){
+            if (!empty($notificationsErrors)) {
                 $notificationsErrors[0]->send()->toDatabase();
-                foreach ($notificationsErrors as $notification )
-                {
+                foreach ($notificationsErrors as $notification) {
                     $notification->sendToDatabase(auth()->user());
                 }
             }

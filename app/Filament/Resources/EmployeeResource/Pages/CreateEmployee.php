@@ -35,7 +35,7 @@ class CreateEmployee extends CreateRecord
                         $this->create();
                         $zk->disableDevice();
                     } else {
-                        Notification::make()->title("فشل الاتصال ");
+                        Notification::make()->title("فشل الاتصال ")->danger()->send();
                     }
 
                 }),

@@ -31,13 +31,14 @@ class EditEmployee extends EditRecord
                 ->action(function () {
                     $device = Device::find($this->data['device_id']);
                     $zk = new ZKTeco($device->ip);
-                    if ($zk->connect()) {
+                      if ($zk->connect()) {
                         $zk->setUser($this->data['uid'], $this->data['userid'], $this->data["name"], $this->data['password'] ?? 123123, $this->data['role']);
                         $this->save();
-                        $this->redirect(EmployeeResource::getUrl("index"));
+                        $this->redirect(EmployeeResource::getUrl());
                     } else {
-                        Notification::make()->title("فشل الاتصال ");
-                    }
+                          $notification = Notification::make()->title("فشل الاتصال ")->danger()->send()->toDatabase();
+                          auth()->user()->notify($notification);
+                      }
                 }),
             $this->getCancelFormAction(),
         ];

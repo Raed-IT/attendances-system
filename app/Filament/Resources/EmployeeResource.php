@@ -14,6 +14,7 @@ use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\TextInput\Mask;
 use Filament\Notifications\Notification;
 use Filament\Resources\Form;
+use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
@@ -24,9 +25,10 @@ use Filament\Tables\Filters\TernaryFilter;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
 use Rats\Zkteco\Lib\ZKTeco;
+use Livewire\Component as Livewire;
 
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Resources\Pages\Page;
+ use Closure;
 
 class EmployeeResource extends Resource
 {
@@ -47,25 +49,27 @@ class EmployeeResource extends Resource
             ->schema([
                 Forms\Components\Card::make()->schema([
 
-                    Forms\Components\Card::make()
-                        ->schema(function (Page $livewire) {
-                            if ($livewire instanceof CreateRecord) {
-                                return [
-                                    Forms\Components\TextInput::make("name")->label("اسم الموضف ")->required(),//->unique(ignoreRecord: true),
-
-                                    Forms\Components\TextInput::make("uid")->label(" uid")->unique(ignoreRecord: true)
-                                        ->numeric()->maxValue(65000)->minValue(1)->mask(fn(Mask $mask) => $mask->numeric()),
-                                ];
-                            } else {
-                                return [
-                                    Forms\Components\TextInput::make("name")->label("اسم الموضف ")->required(),//->unique(ignoreRecord: true),
-
-                                    Forms\Components\Hidden::make("uid")->label(" uid")->unique(ignoreRecord: true),];
-                            }
-                        }),
+                    Forms\Components\TextInput::make("name")->label("اسم الموضف ")->required(),//->unique(ignoreRecord: true),
+                    Forms\Components\TextInput::make("uid")->label(" uid")->disabled(),
 
                     Forms\Components\Select::make("device_id")
-                        ->relationship("device", "name")->label("الجهاز")->required(),
+                        ->options(function () {
+                            return Device::all()->pluck("name", "id");
+                        })->label("الجهاز")
+                        ->reactive()->required()->afterStateUpdated(function (Closure $set, $state, Livewire $livewire) {
+                            if ($livewire instanceof CreateRecord) {
+                                $employees = Employee::whereDeviceId($state)->get();
+                                $max = $employees->max('uid');
+                                $min = 1;
+                                $standerArray = range($min, $max);
+                                $missing = array_diff($standerArray, $employees->pluck("uid")->toArray());
+                                if ($missing) {
+                                    $set('uid', min($missing));
+                                } else {
+                                    $set('uid', $max + 1);
+                                }
+                            }
+                        }),
 
                     Forms\Components\Select::make("section_id")
                         ->relationship("section", "name")->label("القسم")->required(),
@@ -73,7 +77,18 @@ class EmployeeResource extends Resource
                     Forms\Components\Select::make("role")->options(EmployeeDeviceRoleEnum::values())->default(EmployeeDeviceRoleEnum::USER->value),
 
                     Forms\Components\TextInput::make("userid")->label("ID المستخدم")
-                        ->required()->unique(ignoreRecord: true)->maxLength(8)->numeric()->mask(fn(Mask $mask) => $mask->numeric()),
+                        ->required()->unique(ignoreRecord: true)->maxLength(8)->numeric()->mask(fn(Mask $mask) => $mask->numeric())->default(function () {
+                            $employees = Employee::all();
+                            $max = $employees->max('userid');
+                            $min = 1;
+                            $standerArray = range($min, $max);
+                            $missing = array_diff($standerArray, $employees->pluck("userid")->toArray());
+                            if ($missing) {
+                                return min($missing);
+                            } else {
+                                return $max + 1;
+                            }
+                        }),
 
 
                     Forms\Components\TextInput::make("password")->label("كلمة السر")->mask(fn(Mask $mask) => $mask->numeric())->maxLength(8),

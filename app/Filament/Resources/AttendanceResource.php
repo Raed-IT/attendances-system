@@ -15,6 +15,7 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Carbon;
 use Rats\Zkteco\Lib\Helper\Util;
 use Filament\Tables\Filters\Filter;
 use Svg\Tag\Text;
@@ -75,6 +76,8 @@ class AttendanceResource extends Resource
                     ->form([
                         Forms\Components\DatePicker::make('created_from'),
                         Forms\Components\DatePicker::make('created_until'),
+                        Forms\Components\TimePicker::make('start_time')->label("من"),
+                        Forms\Components\TimePicker::make('end_time')->label("الى"),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
@@ -85,7 +88,9 @@ class AttendanceResource extends Resource
                             ->when(
                                 $data['created_until'],
                                 fn(Builder $query, $date): Builder => $query->whereDate('timestamp', '<=', $date),
-                            );
+                            )->when($data['start_time'] && $data['end_time'], function ($q) use ($data) {
+                                $q->whereBetween('timestamp', [Carbon::now()->format('Y/m/d H:i:s'), $data['end_time']]);
+                            });
                     })
             ])
             ->actions([
