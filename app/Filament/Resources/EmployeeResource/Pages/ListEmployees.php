@@ -4,9 +4,11 @@ namespace App\Filament\Resources\EmployeeResource\Pages;
 
 use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Resources\EmployeeResource;
+use App\Jobs\CalculateReportsJob;
 use App\Models\Device;
 use App\Models\Employee;
 use App\Traits\SendNotificationsTrait;
+use Artisan;
 use Carbon\Carbon;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Hidden;

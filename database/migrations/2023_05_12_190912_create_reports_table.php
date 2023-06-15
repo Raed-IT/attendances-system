@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->date("moth");
             $table->integer("hours");
+
             $table->integer("over_time")->default(0)->nullable();
             $table->foreignId("employee_id")->constrained()->cascadeOnDelete();
             $table->timestamps();

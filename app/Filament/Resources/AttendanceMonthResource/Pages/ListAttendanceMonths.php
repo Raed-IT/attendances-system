@@ -5,6 +5,7 @@ namespace App\Filament\Resources\AttendanceMonthResource\Pages;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Resources\AttendanceMonthResource;
 use App\Helpers\CalculateAttendances;
+use App\Jobs\CalculateReportsJob;
 use App\Models\Attendance;
 use App\Models\AttendanceMonth;
 use App\Models\Device;
@@ -42,7 +43,8 @@ class ListAttendanceMonths extends ListRecords
                 ->requiresConfirmation()
                 ->modalButton("تحليل")
                 ->action(function () {
-                    CalculateAttendances::calculateHoras();
+                    CalculateReportsJob::dispatch(auth()->user());
+//                    \Artisan::call("queue:listen");
                 })->label("تحليل بيانات الموظفين")
         ];
     }
@@ -55,6 +57,7 @@ class ListAttendanceMonths extends ListRecords
 
         ];
     }
+
     protected function syncEmployeeAttendanceFromDevice($data)
     {
 

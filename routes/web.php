@@ -5,6 +5,8 @@ use App\Enums\EmployeeDeviceRoleEnum;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 use Rats\Zkteco\Lib\ZKTeco;
+use Spatie\Period\Period;
+use Spatie\Period\Precision;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +21,14 @@ use Rats\Zkteco\Lib\ZKTeco;
 
 
 Route::get('/', function () {
+
+
+ //    $employees = \App\Models\Employee::doesnthave("attendances")->get();
+//    dd($employees);
+//    foreach ($employees as $employee){
+//        $employee->attendances()->delete();
+//        $employee->delete();
+//    }
 
 //    dd(AttendanceTypeEnum::());
 //    $zk = new ZKTeco('192.168.1.211');

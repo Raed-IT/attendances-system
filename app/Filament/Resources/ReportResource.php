@@ -38,7 +38,10 @@ class ReportResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make("id")->sortable()->label("ID"),
                 Tables\Columns\BadgeColumn::make("employee.name")->label("الموظف")->searchable(),
-                Tables\Columns\TextColumn::make("hours")->label("ساعات العمل "),
+                Tables\Columns\BadgeColumn::make("total_time")->label("الحقيقيةالساعات ")->searchable(),
+                Tables\Columns\TextColumn::make("hours")->label("ساعات الطبيعية "),
+                Tables\Columns\TextColumn::make("fault_time")->label("ساعات الغياب "),
+                Tables\Columns\TextColumn::make("over_time")->label("ساعات الإضافي "),
                 Tables\Columns\TextColumn::make("over_time")->label("ساعات العمل الاضافي"),
                 Tables\Columns\TextColumn::make("moth")->label("تقرير شهر ")->sortable(),
 
@@ -47,7 +50,7 @@ class ReportResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+//                Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
@@ -66,7 +69,7 @@ class ReportResource extends Resource
         return [
             'index' => Pages\ListReports::route('/'),
             'create' => Pages\CreateReport::route('/create'),
-            'edit' => Pages\EditReport::route('/{record}/edit'),
+//            'edit' => Pages\EditReport::route('/{record}/edit'),
         ];
     }
 }
