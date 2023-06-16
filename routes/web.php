@@ -22,7 +22,6 @@ use Spatie\Period\Precision;
 
 Route::get('/', function () {
 
-
  //    $employees = \App\Models\Employee::doesnthave("attendances")->get();
 //    dd($employees);
 //    foreach ($employees as $employee){

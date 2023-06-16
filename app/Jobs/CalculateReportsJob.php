@@ -91,10 +91,11 @@ class CalculateReportsJob implements ShouldQueue
                 ]);
             }
             $notification = Notification::make()->title("تم تحليل بيانات الموظفين")->success();
-            $notification->send();
             $this->user->notify($notification->toDatabase());
         } catch (\Exception $e) {
             info($e);
+            $notification = Notification::make()->title("فشل تحليل بيانات الموظفين")->danger();
+            $this->user->notify($notification->toDatabase());
         }
     }
 }

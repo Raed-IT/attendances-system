@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8f1bf096cead2c76b8780e41dc557014",
+    "content-hash": "d2ecd656962ef8837daff8d876f751e6",
     "packages": [
         {
             "name": "akaunting/laravel-money",
@@ -415,16 +415,16 @@
         },
         {
             "name": "croustibat/filament-jobs-monitor",
-            "version": "1.0.4",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/croustibat/filament-jobs-monitor.git",
-                "reference": "df74f14a88807ea05306662ee0ab0fcc386c60c8"
+                "reference": "ee4fbcb2d7a97d27544e92e6ae2a01ac03da3d91"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/croustibat/filament-jobs-monitor/zipball/df74f14a88807ea05306662ee0ab0fcc386c60c8",
-                "reference": "df74f14a88807ea05306662ee0ab0fcc386c60c8",
+                "url": "https://api.github.com/repos/croustibat/filament-jobs-monitor/zipball/ee4fbcb2d7a97d27544e92e6ae2a01ac03da3d91",
+                "reference": "ee4fbcb2d7a97d27544e92e6ae2a01ac03da3d91",
                 "shasum": ""
             },
             "require": {
@@ -474,7 +474,7 @@
             ],
             "support": {
                 "issues": "https://github.com/croustibat/filament-jobs-monitor/issues",
-                "source": "https://github.com/croustibat/filament-jobs-monitor/tree/1.0.4"
+                "source": "https://github.com/croustibat/filament-jobs-monitor/tree/1.1.0"
             },
             "funding": [
                 {
@@ -482,7 +482,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-05-29T14:44:16+00:00"
+            "time": "2023-06-13T15:17:19+00:00"
         },
         {
             "name": "danharrin/date-format-converter",

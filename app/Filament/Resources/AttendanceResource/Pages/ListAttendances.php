@@ -4,6 +4,7 @@ namespace App\Filament\Resources\AttendanceResource\Pages;
 
 use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Resources\AttendanceResource;
+use App\Jobs\SyncEmployeeAttendsJob;
 use App\Models\Attendance;
 use App\Models\Device;
 use App\Models\Employee;
@@ -34,7 +35,7 @@ class ListAttendances extends ListRecords
                         ->required()->label("اختر جهاز البصمة"),
                 ])
                 ->requiresConfirmation()->action(function ($data) {
-                    $this->syncEmployeeAttendanceFromDevice($data);
+                    SyncEmployeeAttendsJob::dispatch($data, auth()->user());
                 })
         ];
     }
@@ -48,32 +49,4 @@ class ListAttendances extends ListRecords
         ];
     }
 
-    protected function syncEmployeeAttendanceFromDevice($data)
-    {
-
-        $zk = new ZKTeco($data["device_ip"]);
-        if ($zk->connect()) {
-            $zk->enableDevice();
-            $attendances = $zk->getAttendance();
-            foreach ($attendances as $attendance) {
-
-                try {
-                    $user_id = $attendance['id'];
-                    $data = Arr::except($attendance, ['id']);
-                    $data['user_id'] = $user_id;
-                    Attendance::updateOrCreate(['timestamp' => $attendance['timestamp'], "uid" => $attendance['uid']], $data);
-                } catch (\Exception $e) {
-                    $zk->disableDevice();
-                    $this->notifyCurrentUser("فشل مزامنة مزامنة الموظفين" . $attendance["id"], true);
-                }
-            }
-            $zk->disableDevice();
-            $zk->disconnect();
-
-            $this->notifyCurrentUser("تم مزامنة  حركة الموظفين", true, true);
-
-        } else {
-            Notification::make()->title("لم بتم الوصول الى الجهاز اكد من الاتصال ")->danger()->send();
-        }
-    }
 }
