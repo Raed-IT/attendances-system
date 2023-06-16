@@ -16,12 +16,14 @@ class ListQueueMonitorApps extends ListQueueMonitors
     protected function getActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\Action::make("delete")->color("danger")->action(function(){
+                QueueMonitoring::truncate();
+            })->label("حذف العناصر الموجوده"),
         ];
     }
 
     protected function getTableQuery(): Builder
     {
-        return QueueMonitoring::query()->latest();
+        return QueueMonitoring::query()->where("name","!=","Filament\Notifications\DatabaseNotification")->latest();
     }
 }
