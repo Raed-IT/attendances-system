@@ -33,25 +33,25 @@ class AttendanceResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Card::make()->schema([
-
-                    Forms\Components\Hidden::make("uid")->required(),
-
-                    Forms\Components\Select::make("user_id")->relationship("employee", "name")
-                        ->searchable()->required()->preload()->reactive()
-                        ->afterStateUpdated(function (callable $get, callable $set) {
-                            $employee = Employee::whereUserid($get("user_id"))->first();
-                            $set("uid", $employee->uid);
-                        }),
-
-
-                    Forms\Components\DateTimePicker::make("timestamp")->required(),
-
-                    Forms\Components\TextInput::make("state")->default(1),
-
-                    Forms\Components\Select::make("type")->options(AttendanceTypeEnum::values())->required(),
-
-                ])
+//                Forms\Components\Card::make()->schema([
+//
+//                    Forms\Components\Hidden::make("uid")->required(),
+//
+//                    Forms\Components\Select::make("user_id")->relationship("employee", "name")
+//                        ->searchable()->required()->preload()->reactive()
+//                        ->afterStateUpdated(function (callable $get, callable $set) {
+//                            $employee = Employee::whereUserid($get("user_id"))->first();
+//                            $set("uid", $employee->uid);
+//                        }),
+//
+//
+//                    Forms\Components\DateTimePicker::make("timestamp")->required(),
+//
+//                    Forms\Components\TextInput::make("state")->default(1),
+//
+//                    Forms\Components\Select::make("type")->options(AttendanceTypeEnum::values())->required(),
+//
+//                ])
             ]);
     }
 
@@ -76,9 +76,7 @@ class AttendanceResource extends Resource
                     ->form([
                         Forms\Components\DatePicker::make('created_from'),
                         Forms\Components\DatePicker::make('created_until'),
-                        Forms\Components\TimePicker::make('start_time')->label("من"),
-                        Forms\Components\TimePicker::make('end_time')->label("الى"),
-                    ])
+                       ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
                             ->when(
@@ -88,9 +86,7 @@ class AttendanceResource extends Resource
                             ->when(
                                 $data['created_until'],
                                 fn(Builder $query, $date): Builder => $query->whereDate('timestamp', '<=', $date),
-                            )->when($data['start_time'] && $data['end_time'], function ($q) use ($data) {
-                                $q->whereBetween('timestamp', [Carbon::now()->format('Y/m/d H:i:s'), $data['end_time']]);
-                            });
+                            ) ;
                     })
             ])
             ->actions([
@@ -112,8 +108,8 @@ class AttendanceResource extends Resource
     {
         return [
             'index' => Pages\ListAttendances::route('/'),
-            'create' => Pages\CreateAttendance::route('/create'),
-            'edit' => Pages\EditAttendance::route('/{record}/edit'),
+//            'create' => Pages\CreateAttendance::route('/create'),
+//            'edit' => Pages\EditAttendance::route('/{record}/edit'),
         ];
     }
 }

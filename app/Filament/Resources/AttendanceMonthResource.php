@@ -52,6 +52,7 @@ class AttendanceMonthResource extends Resource
                     Forms\Components\DateTimePicker::make("timestamp")->required(),
                     Forms\Components\Hidden::make("state")->default(1),
                     Forms\Components\Select::make("type")->options(AttendanceTypeEnum::values())->required(),
+                    Forms\Components\Select::make("device_id")->relationship("device", "name")->label("البصامة")->required(),
                 ])
             ]);
     }
@@ -79,23 +80,23 @@ class AttendanceMonthResource extends Resource
 
                 Filter::make('timestamp')
                     ->form([
-                        Forms\Components\DatePicker::make('created_from'),
-                        Forms\Components\DatePicker::make('created_until'),
+                        Forms\Components\DateTimePicker::make('from'),
+                        Forms\Components\DateTimePicker::make('to'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
                             ->when(
-                                $data['created_from'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('timestamp', '>=', $date),
-                            )
-                            ->when(
-                                $data['created_until'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('timestamp', '<=', $date),
+                                $data['from'] && $data['to'],
+                                function (Builder $query, $date) use ($data): Builder {
+                                    return $query->whereBetween('timestamp', [Carbon::parse($date['from']),Carbon::parse( $date['to'])]);
+                                }
                             );
                     })
             ])
             ->actions([
-//                Tables\Actions\EditAction::make(),
+
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
@@ -113,8 +114,8 @@ class AttendanceMonthResource extends Resource
     {
         return [
             'index' => Pages\ListAttendanceMonths::route('/'),
-            'create' => Pages\CreateAttendanceMonth::route('/create'),
-            'edit' => Pages\EditAttendanceMonth::route('/{record}/edit'),
+//            'create' => Pages\CreateAttendanceMonth::route('/create'),
+//            'edit' => Pages\EditAttendanceMonth::route('/{record}/edit'),
         ];
     }
 }

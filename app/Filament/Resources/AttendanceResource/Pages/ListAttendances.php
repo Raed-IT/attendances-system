@@ -24,21 +24,6 @@ class ListAttendances extends ListRecords
     protected static string $resource = AttendanceResource::class;
 
 
-    protected function getActions(): array
-    {
-        return [
-            Actions\CreateAction::make(),
-            Actions\Action::make("syncAttendance")->label("مزامنة حركة الموظفين")
-                ->color("success")
-                ->modalButton('مزامنة')->form([
-                    Select::make("device_ip")->options(fn() => Device::all()->pluck("name", "ip"))
-                        ->required()->label("اختر جهاز البصمة"),
-                ])
-                ->requiresConfirmation()->action(function ($data) {
-                    SyncEmployeeAttendsJob::dispatch($data, auth()->user());
-                })
-        ];
-    }
 
     protected function getTableHeaderActions(): array
     {

@@ -4,6 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ActualSalaryMonthResource\Pages;
 use App\Models\ActualSalaryMonth;
+use Filament\Forms\Components\Card;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
@@ -27,7 +29,11 @@ class ActualSalaryMonthResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Card::make()->schema([
+                    TextInput::make("total")->label("الراتب المستحق ")
+                        ->mask(fn(TextInput\Mask $mask) => $mask->money(prefix: '$', thousandsSeparator: ',', decimalPlaces: 1))->required(),
+//                    Forms\Components\Select::make("employee_id")->relationship("employee","name")->required()->label("الموظف"),
+                ]),
             ]);
     }
 
@@ -63,8 +69,8 @@ class ActualSalaryMonthResource extends Resource
     {
         return [
             'index' => Pages\ListActualSalaryMonths::route('/'),
-            'create' => Pages\CreateActualSalaryMonth::route('/create'),
-            'edit' => Pages\EditActualSalaryMonth::route('/{record}/edit'),
+//            'create' => Pages\CreateActualSalaryMonth::route('/create'),
+//            'edit' => Pages\EditActualSalaryMonth::route('/{record}/edit'),
         ];
     }
 }
