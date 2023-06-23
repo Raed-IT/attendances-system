@@ -22,7 +22,8 @@ use Spatie\Period\Precision;
 
 
 Route::get('/', function () {
-    dd(Carbon::now()->firstOfMonth()->format("Y-m-d"));
+    //2023-06-01 00:00:00
+    dd(Carbon::parse("2023-06-01 00:00:00"));
     //    $records = Attendance::where([
 //        ["timestamp", '>', now()->firstOfMonth()->format('Y-m-d')],
 //        "user_id" => 1190

@@ -86,10 +86,9 @@ class AttendanceMonthResource extends Resource
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
                             ->when(
-                                $data['from'] && $data['to'],
-                                function (Builder $query, $date) use ($data): Builder {
-                                    return $query->whereBetween('timestamp', [Carbon::parse($date['from']),Carbon::parse( $date['to'])]);
-                                }
+                                $data['from'],
+                                fn($q) => $q->when($data["to"], fn($qu) => $qu->whereBetween('timestamp', [Carbon::parse($data['from']) , Carbon::parse($data['to']) ])
+                                )
                             );
                     })
             ])
