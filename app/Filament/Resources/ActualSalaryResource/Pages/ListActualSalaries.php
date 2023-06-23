@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ActualSalaryResource\Pages;
 
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Resources\ActualSalaryResource;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -14,6 +15,15 @@ class ListActualSalaries extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+        ];
+    }
+
+    protected function getTableHeaderActions(): array
+    {
+        return [
+
+            FilamentExportHeaderAction::make('Export')->label("تصدير البيانات ")->button()->color("danger"),
+
         ];
     }
 }

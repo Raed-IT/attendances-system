@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\PermanenceTypeEnum;
 use App\Filament\Resources\ReportMonthResource\Pages;
 use App\Filament\Resources\ReportMonthResource\RelationManagers;
 use App\Models\ReportMonth;
@@ -48,6 +49,9 @@ class ReportMonthResource extends Resource
                 Tables\Columns\TextColumn::make("fault_time")->label("ساعات الغياب "),
                 Tables\Columns\TextColumn::make("over_time")->label("ساعات الإضافي "),
                 Tables\Columns\TextColumn::make("over_time")->label("ساعات العمل الاضافي"),
+                Tables\Columns\BadgeColumn::make("permanence_type")->label("نوع الراتب")->getStateUsing(function ($record) {
+                    return PermanenceTypeEnum::tryFrom($record->permanence_type)?->name();
+                })->color(fn($record)=>PermanenceTypeEnum::tryFrom($record->permanence_type)?->color()),
                 Tables\Columns\TextColumn::make("moth")->label("تقرير شهر ")->sortable(),
 
             ])
@@ -73,8 +77,8 @@ class ReportMonthResource extends Resource
     {
         return [
             'index' => Pages\ListReportMonths::route('/'),
-            'create' => Pages\CreateReportMonth::route('/create'),
-            'edit' => Pages\EditReportMonth::route('/{record}/edit'),
+//            'create' => Pages\CreateReportMonth::route('/create'),
+//            'edit' => Pages\EditReportMonth::route('/{record}/edit'),
         ];
     }
 }

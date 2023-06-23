@@ -2,6 +2,7 @@
 
 use App\Enums\AttendanceTypeEnum;
 use App\Enums\EmployeeDeviceRoleEnum;
+use App\Models\Attendance;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 use Rats\Zkteco\Lib\ZKTeco;
@@ -21,9 +22,12 @@ use Spatie\Period\Precision;
 
 
 Route::get('/', function () {
-//    $emp = \App\Models\Employee::whereNull("salary_id")->delete();\
-    dd(\App\Models\Employee::whereDoesntHave("attendances")->get()[0]);
-    //    $employees = \App\Models\Employee::doesnthave("attendances")->get();
+    dd(Carbon::now()->firstOfMonth()->format("Y-m-d"));
+    //    $records = Attendance::where([
+//        ["timestamp", '>', now()->firstOfMonth()->format('Y-m-d')],
+//        "user_id" => 1190
+//    ])->orderBy('timestamp')->pluck("timestamp");
+//    $employees = \App\Models\Employee::doesnthave("attendances")->get();
 //    dd($employees);
 //    foreach ($employees as $employee){
 //        $employee->attendances()->delete();

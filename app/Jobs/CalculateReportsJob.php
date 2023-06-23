@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Enums\PermanenceTypeEnum;
 use App\Models\Attendance;
 use App\Models\Employee;
 use App\Models\Report;
@@ -40,7 +41,7 @@ class CalculateReportsJob implements ShouldQueue
             $employees = Employee::whereHas("attendances")->whereHas("salary")->with("salary")->get();
             $totalEmp = count($employees);
             $currentEmp = 0;
-            info($employees);
+//            info($employees);
 
             foreach ($employees as $employee) {
                 $currentEmp++;
@@ -50,6 +51,7 @@ class CalculateReportsJob implements ShouldQueue
                     ["timestamp", '>', now()->firstOfMonth()->format('Y-m-d')],
                     "user_id" => $employee->userid
                 ])->orderBy('timestamp')->get();
+
                 // all values  in  minutes
                 $shift = $salary->count_of_shift * 60;
                 $actual = 0;
@@ -57,10 +59,9 @@ class CalculateReportsJob implements ShouldQueue
                 $faultTime = 0;
                 $lastInDate = null;
 
+                info($salary->type == PermanenceTypeEnum::CONSTANT->value . " $salary->type    ,, " . PermanenceTypeEnum::CONSTANT->value);
                 $calcLastCheckOut = false;
-
                 foreach ($records as $record) {
-
                     if ($record->type == 0 && $calcLastCheckOut == false) {
                         $calcLastCheckOut = true;
                         // Store the date and time of the "in" record
@@ -73,13 +74,20 @@ class CalculateReportsJob implements ShouldQueue
                         $outDate = Carbon::parse($record->timestamp);
                         $minutes = $outDate->diffInMinutes($lastInDate);
                         // Add the hours to the total attended by the employee
-                        if ($minutes > $shift) {
-                            $overTime += $minutes - $shift;
-                            $actual += $shift;
-                        } else {
-                            $faultTime = $shift - $minutes;
+
+                        if ($salary->type == PermanenceTypeEnum::CONSTANT->value) {
+//                            salary is constant directly gev
                             $actual += $minutes;
+                        } else {
+                            if ($minutes > $shift) {
+                                $overTime += $minutes - $shift;
+                                $actual += $shift;
+                            } else if ($minutes < $shift) {
+                                $faultTime = $shift - $minutes;
+                                $actual += $minutes;
+                            }
                         }
+
 
                     }
                 }

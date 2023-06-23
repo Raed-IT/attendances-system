@@ -3,8 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ActualSalaryMonthResource\Pages;
- use App\Models\ActualSalaryMonth;
- use Filament\Resources\Form;
+use App\Models\ActualSalaryMonth;
+use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
@@ -35,7 +35,11 @@ class ActualSalaryMonthResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make("id")->label("ID")->sortable(),
+                Tables\Columns\TextColumn::make("employee.name")->label("الموظف")->searchable(),
+                Tables\Columns\BadgeColumn::make("total")->label("الراتب المستحق")->sortable(),
+                Tables\Columns\BadgeColumn::make("employee.bank_no")->label("بطاقة البنك")->sortable(),
+
             ])
             ->filters([
                 //

@@ -56,9 +56,7 @@ class ListAttendanceMonths extends ListRecords
     protected function getTableHeaderActions(): array
     {
         return [
-
             FilamentExportHeaderAction::make('Export')->label("تصدير البيانات ")->button()->color("danger"),
-
         ];
     }
 
