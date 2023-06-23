@@ -4,15 +4,21 @@ namespace App\Filament\Resources\AttendanceMonthResource\Pages;
 
 use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Resources\AttendanceMonthResource;
+use App\Filament\Resources\ErrorSynckResource;
 use App\Jobs\CalculateReportsJob;
 
 use App\Jobs\SyncEmployeeAttendsJob;
+use App\Models\Attendance;
 use App\Models\Device;
+use App\Models\ErrorSyncModel;
 use App\Traits\SendNotificationsTrait;
 use Filament\Forms\Components\Select;
 
+use Filament\Notifications\Notification;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Support\Arr;
+use Rats\Zkteco\Lib\ZKTeco;
 
 
 class ListAttendanceMonths extends ListRecords
@@ -33,12 +39,14 @@ class ListAttendanceMonths extends ListRecords
                         ->required()->label("اختر جهاز البصمة"),
                 ])
                 ->requiresConfirmation()->action(function ($data) {
+                    Notification::make()->title("بدات عملية المزامنة")->success()->send();
                     SyncEmployeeAttendsJob::dispatch($data, auth()->user());
                 }),
             Actions\Action::make("calc")
                 ->requiresConfirmation()
                 ->modalButton("تحليل")
                 ->action(function () {
+                    Notification::make()->title("بدات عملية تحليل")->success()->send();
                     CalculateReportsJob::dispatch(auth()->user());
 //                    \Artisan::call("queue:listen");
                 })->label("تحليل بيانات الموظفين")

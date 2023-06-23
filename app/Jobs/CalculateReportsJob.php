@@ -34,11 +34,14 @@ class CalculateReportsJob implements ShouldQueue
      */
     public function handle(): void
     {
+        $this->setProgress(10);
         try {
-            $this->setProgress(0);
+            $this->setProgress(1);
             $employees = Employee::whereHas("attendances")->whereHas("salary")->with("salary")->get();
             $totalEmp = count($employees);
             $currentEmp = 0;
+            info($employees);
+
             foreach ($employees as $employee) {
                 $currentEmp++;
                 $this->setProgress(($currentEmp * 100) / $totalEmp);
@@ -97,5 +100,6 @@ class CalculateReportsJob implements ShouldQueue
             $notification = Notification::make()->title("فشل تحليل بيانات الموظفين")->danger();
             $this->user->notify($notification->toDatabase());
         }
+        $this->setProgress(100);
     }
 }

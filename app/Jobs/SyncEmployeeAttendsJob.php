@@ -2,8 +2,11 @@
 
 namespace App\Jobs;
 
+use App\Filament\Resources\ErrorSynckResource;
 use App\Models\Attendance;
+use App\Models\Device;
 use App\Models\Employee;
+use App\Models\ErrorSyncModel;
 use App\Models\User;
 use Filament\Notifications\Notification;
 use Illuminate\Bus\Queueable;
@@ -19,7 +22,7 @@ class SyncEmployeeAttendsJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $data;
+    public array $data = [];
     public User $user;
 
     /**
@@ -36,29 +39,49 @@ class SyncEmployeeAttendsJob implements ShouldQueue
      */
     public function handle(): void
     {
+
         $zk = new ZKTeco($this->data["device_ip"]);
+        $deviceId = Device::whereIp($this->data["device_ip"])->first()->id;
         if ($zk->connect()) {
             $zk->enableDevice();
             $attendances = $zk->getAttendance();
+            $errors = [];
             foreach ($attendances as $attendance) {
                 try {
                     $user_id = $attendance['id'];
                     $data = Arr::except($attendance, ['id']);
                     $data['user_id'] = $user_id;
-                    Attendance::updateOrCreate(['timestamp' => $attendance['timestamp'], "uid" => $attendance['uid']], $data);
+                    $data["device_id"] = $deviceId;
+                    Attendance::updateOrCreate(
+                        ['timestamp' => $attendance['timestamp'],
+                            "uid" => $attendance['uid']
+                        ]
+                        , $data);
                 } catch (\Exception $e) {
-                    info($e);
                     $zk->disableDevice();
-                    $notification = Notification::make()->title("فشل مزامنة مزامنة الموظفين" . $attendance["uid"],)->danger();
-                    $this->user->notify($notification->toDatabase());
+                    array_push($errors, $user_id);
                 }
+
             }
+            $errorString = "";
+            foreach ($errors as $error) {
+                $errorString .= $error . ' , ';
+            }
+
+            $err = ErrorSyncModel::create([
+                "content" => "فشل في مزامنة حركة الحظور والانصراف " . $errorString,
+            ]);
+            $notificationSuccess = Notification::make()->title("تمت المزامنة")->success();
+            $notification = Notification::make()->title("فشل مزامنة   الموظفين")->body("رقم الخطاء في جدوال الاخطاء " . $err->id)->danger();
+            $this->user->notify($notificationSuccess->toDatabase());
+            $this->user->notify($notification->toDatabase());
             $zk->disableDevice();
             $zk->disconnect();
-            $notification = Notification::make()->title("تم مزامنة  حركة الموظفين")->success();
-            $this->user->notify($notification->toDatabase());
+
+
         } else {
-            Notification::make()->title("لم بتم الوصول الى الجهاز اكد من الاتصال ")->danger()->send();
+            $notification = Notification::make()->title("لم بتم الوصول الى الجهاز اكد من الاتصال ")->danger();
+            $this->user->notify($notification->toDatabase());
         }
     }
 }

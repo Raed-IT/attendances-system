@@ -13,8 +13,8 @@ return new class extends Migration {
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
             $table->bigInteger("uid")->nullable();
-            $table->bigInteger("userid")->nullable()->unsigned()->unique();
-            $table->bigInteger("device_id")->nullable();
+            $table->bigInteger("userid")->nullable()->unsigned();
+            $table->bigInteger("device_id")->nullable()->unsigned();
             $table->bigInteger("namerole")->nullable();
             $table->boolean("role")->nullable();
             $table->string("password")->nullable();
@@ -30,6 +30,7 @@ return new class extends Migration {
             ])->default(\App\Enums\PermanenceTypeEnum::ADMINISTRATIVE->value)->comment("نوع الدوام ")->nullable();
             $table->string("job_description")->comment("الوصف الوظيفي ")->nullable();
 
+            $table->unique(["userid", "device_id"]);
             $table->foreignId("section_id")->nullable()->constrained('sections')->nullOnDelete();
 
             $table->timestamps();

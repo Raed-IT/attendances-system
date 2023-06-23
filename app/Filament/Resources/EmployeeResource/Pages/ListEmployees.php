@@ -7,6 +7,7 @@ use App\Filament\Resources\EmployeeResource;
 use App\Jobs\CalculateReportsJob;
 use App\Models\Device;
 use App\Models\Employee;
+use App\Models\ErrorSyncModel;
 use App\Traits\SendNotificationsTrait;
 use Artisan;
 use Carbon\Carbon;
@@ -58,10 +59,11 @@ class ListEmployees extends ListRecords
     protected function syncEmployeeFromDevice($data)
     {
         $zk = new ZKTeco($data["device_ip"]);
-        $notificationsErrors = [];
         if ($zk->connect()) {
             $zk->enableDevice();
             $employees = $zk->getUser();
+            $zk->disableDevice();
+            $errors = [];
             foreach ($employees as $employee) {
                 try {
                     $employee['device_id'] = $data['device_id'];
@@ -80,22 +82,31 @@ class ListEmployees extends ListRecords
                         "device_id" => $employee['device_id'],
                     ], $employee);
                 } catch (\Exception $e) {
-                    array_push($notificationsErrors, Notification::make()->title(" فشل  مزامنة الموظفين" . $employee['userid'])->danger());
-
+                    array_push($errors, $employee['userid']);
                 }
 
 
             }
-            $zk->disableDevice();
-
-            if (!empty($notificationsErrors)) {
-                $notificationsErrors[0]->send()->toDatabase();
-                foreach ($notificationsErrors as $notification) {
-                    $notification->sendToDatabase(auth()->user());
+            if (!empty($errors)){
+                $errorString = "";
+                foreach ($errors as $error) {
+                    $errorString .= $error . '  ,  ';
                 }
+
+                $err = ErrorSyncModel::create([
+                    "content" => "فشل في مزامنة  الموظفين " . $errorString,
+                ]);
+                $notification = Notification::make()->title("فشل مزامنة   الموظفين")->body("رقم الخطاء في جدوال الاخطاء " . $err->id)->danger();
+                auth()->user()->notify($notification->toDatabase());
+
+            }else{
+                $notification = Notification::make()->title("تم مزامنة   الموظفين")->success();
+                auth()->user()->notify($notification->toDatabase());
             }
         } else {
-            Notification::make()->title("لم بتم الوصول الى الجهاز اكد من الاتصال ")->danger()->send();
+            $notification = Notification::make()->title("لم بتم الوصول الى الجهاز اكد من الاتصال ")->danger();
+            $notification->send();
+            auth()->user()->notify($notification);
         }
     }
 

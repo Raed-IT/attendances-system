@@ -14,7 +14,7 @@ return new class extends Migration {
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
             $table->string("uid")->nullable();
-            $table->foreignId("user_id")->nullable()->constrained("employees" ,"userid")->nullOnDelete();
+            $table->foreignId("user_id")->nullable()->constrained("employees", "userid")->nullOnDelete();
             $table->timestamp("timestamp");
             $table->string("state");
             $table->string("type");

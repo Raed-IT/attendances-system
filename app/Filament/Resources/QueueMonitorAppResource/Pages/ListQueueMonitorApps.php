@@ -15,8 +15,9 @@ class ListQueueMonitorApps extends ListQueueMonitors
 
     protected function getActions(): array
     {
+        QueueMonitoring::whereName("Filament\Notifications\DatabaseNotification")->delete();
         return [
-            Actions\Action::make("delete")->color("danger")->action(function(){
+            Actions\Action::make("delete")->color("danger")->action(function () {
                 QueueMonitoring::truncate();
             })->label("حذف العناصر الموجوده"),
         ];
@@ -24,6 +25,6 @@ class ListQueueMonitorApps extends ListQueueMonitors
 
     protected function getTableQuery(): Builder
     {
-        return QueueMonitoring::query()->where("name","!=","Filament\Notifications\DatabaseNotification")->latest();
+        return QueueMonitoring::query()->where("name", "!=", "Filament\Notifications\DatabaseNotification")->latest();
     }
 }

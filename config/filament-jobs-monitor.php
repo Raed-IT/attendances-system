@@ -4,7 +4,7 @@
 return [
     'navigation' => [
         'enabled' => false,
-        'group_label' => 'الاعدادات',
+        'group_label' => ' الاعدادات ',
         'icon' => 'heroicon-o-chip',
     ],
 ];

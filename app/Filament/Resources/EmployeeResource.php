@@ -28,7 +28,7 @@ use Rats\Zkteco\Lib\ZKTeco;
 use Livewire\Component as Livewire;
 
 use Filament\Resources\Pages\CreateRecord;
- use Closure;
+use Closure;
 
 class EmployeeResource extends Resource
 {
@@ -128,6 +128,9 @@ class EmployeeResource extends Resource
 
                 Tables\Columns\TextColumn::make("userid")->label("معرف الموظف ")->sortable()->searchable(),
                 Tables\Columns\IconColumn::make("has_fingerprint")->label("يملك بصمة")->boolean(),
+                Tables\Columns\IconColumn::make("te")->label("يملك سجل دوام")->boolean()->getStateUsing(function ($record) {
+                    return $record->attendances->isNotEmpty();
+                }),
 
 
                 Tables\Columns\BadgeColumn::make('salary_id')->formatStateUsing(function ($state) {
