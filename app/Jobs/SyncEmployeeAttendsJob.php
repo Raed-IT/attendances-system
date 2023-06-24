@@ -54,7 +54,8 @@ class SyncEmployeeAttendsJob implements ShouldQueue
                     $data["device_id"] = $deviceId;
                     Attendance::updateOrCreate(
                         ['timestamp' => $attendance['timestamp'],
-                            "uid" => $attendance['uid']
+                            "uid" => $attendance['uid'],
+                            "device_id" => $deviceId,
                         ]
                         , $data);
                 } catch (\Exception $e) {
