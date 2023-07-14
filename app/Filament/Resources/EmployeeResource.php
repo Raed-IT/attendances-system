@@ -10,19 +10,17 @@ use App\Models\Employee;
 use App\Models\Salary;
 use App\Traits\SendNotificationsTrait;
 use Filament\Forms;
-use Filament\Forms\Components\Fieldset;
+use Filament\Pages\Page;
 use Filament\Forms\Components\TextInput\Mask;
 use Filament\Notifications\Notification;
 use Filament\Resources\Form;
-use Filament\Resources\Pages\Page;
+use Filament\Resources\Pages\EditRecord;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
 use Rats\Zkteco\Lib\ZKTeco;
 use Livewire\Component as Livewire;
@@ -111,6 +109,10 @@ class EmployeeResource extends Resource
                         }
                         return $data;
                     })->required()->label("نوع الراتب"),
+
+                    Forms\Components\Toggle::make("isUpdate")
+                        ->default(fn(Livewire $livewire) => $livewire instanceof CreateRecord)
+                        ->hidden(fn(Livewire $livewire) => $livewire instanceof CreateRecord)->label("تعديل في جهاز البصمة "),
                 ])]);
     }
 

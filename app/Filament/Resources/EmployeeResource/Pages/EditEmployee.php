@@ -29,16 +29,23 @@ class EditEmployee extends EditRecord
 
             Action::make('save')
                 ->action(function () {
-                    $device = Device::find($this->data['device_id']);
-                    $zk = new ZKTeco($device->ip);
-                      if ($zk->connect()) {
-                        $zk->setUser($this->data['uid'], $this->data['userid'], $this->data["name"], $this->data['password'] ?? 123123, $this->data['role']);
-                        $this->save();
-                        $this->redirect(EmployeeResource::getUrl());
+                    if ($this->data['isUpdate']) {
+                        $device = Device::find($this->data['device_id']);
+                        $zk = new ZKTeco($device->ip);
+                        if ($zk->connect()) {
+                            $zk->enableDevice();
+                            $zk->setUser($this->data['uid'], $this->data['userid'], $this->data["name"], $this->data['password'] ?? 123123, $this->data['role']);
+                            $this->save();
+                            $zk->disableDevice();
+                            $this->redirect(EmployeeResource::getUrl());
+                        } else {
+                            $notification = Notification::make()->title("فشل الاتصال ")->danger();
+                            auth()->user()->notify($notification->toDatabase());
+                            $notification->send();
+                        }
                     } else {
-                          $notification = Notification::make()->title("فشل الاتصال ")->danger()->send()->toDatabase();
-                          auth()->user()->notify($notification);
-                      }
+                        $this->save();
+                    }
                 }),
             $this->getCancelFormAction(),
         ];
