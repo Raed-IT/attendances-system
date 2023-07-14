@@ -87,7 +87,7 @@ class ListEmployees extends ListRecords
 
 
             }
-            if (!empty($errors)){
+            if (!empty($errors)) {
                 $errorString = "";
                 foreach ($errors as $error) {
                     $errorString .= $error . '  ,  ';
@@ -99,14 +99,14 @@ class ListEmployees extends ListRecords
                 $notification = Notification::make()->title("فشل مزامنة   الموظفين")->body("رقم الخطاء في جدوال الاخطاء " . $err->id)->danger();
                 auth()->user()->notify($notification->toDatabase());
 
-            }else{
+            } else {
                 $notification = Notification::make()->title("تم مزامنة   الموظفين")->success();
                 auth()->user()->notify($notification->toDatabase());
             }
         } else {
             $notification = Notification::make()->title("لم بتم الوصول الى الجهاز اكد من الاتصال ")->danger();
+            auth()->user()->notify($notification->toDatabase());
             $notification->send();
-            auth()->user()->notify($notification);
         }
     }
 
