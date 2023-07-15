@@ -35,6 +35,7 @@ class EditEmployee extends EditRecord
                         if ($zk->connect()) {
                             $zk->enableDevice();
                             $zk->setUser($this->data['uid'], $this->data['userid'], $this->data["name"], $this->data['password'] ?? 123123, $this->data['role']);
+
                             $this->save();
                             $zk->disableDevice();
                             $this->redirect(EmployeeResource::getUrl());
@@ -44,6 +45,7 @@ class EditEmployee extends EditRecord
                             $notification->send();
                         }
                     } else {
+
                         $this->save();
                     }
                 }),

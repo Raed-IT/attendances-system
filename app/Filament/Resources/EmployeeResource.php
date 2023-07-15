@@ -9,6 +9,7 @@ use App\Models\Device;
 use App\Models\Employee;
 use App\Models\Salary;
 use App\Traits\SendNotificationsTrait;
+use Cassandra\Cluster;
 use Filament\Forms;
 use Filament\Pages\Page;
 use Filament\Forms\Components\TextInput\Mask;
@@ -72,7 +73,9 @@ class EmployeeResource extends Resource
                     Forms\Components\Select::make("section_id")
                         ->relationship("section", "name")->label("القسم")->required(),
 
-                    Forms\Components\Select::make("role")->options(EmployeeDeviceRoleEnum::values())->default(EmployeeDeviceRoleEnum::USER->value),
+                    Forms\Components\Select::make("role")
+                        ->options(EmployeeDeviceRoleEnum::values())->disabled(fn(Closure  $get)=>!$get("isUpdate"))
+                        ->default(EmployeeDeviceRoleEnum::USER->value),
 
                     Forms\Components\TextInput::make("userid")->label("ID المستخدم")
                         ->required()->unique(ignoreRecord: true)->maxLength(8)->numeric()->mask(fn(Mask $mask) => $mask->numeric())->default(function () {
@@ -109,8 +112,7 @@ class EmployeeResource extends Resource
                         }
                         return $data;
                     })->required()->label("نوع الراتب"),
-
-                    Forms\Components\Toggle::make("isUpdate")
+                    Forms\Components\Toggle::make("isUpdate")->dehydrated(false)->reactive()
                         ->default(fn(Livewire $livewire) => $livewire instanceof CreateRecord)
                         ->hidden(fn(Livewire $livewire) => $livewire instanceof CreateRecord)->label("تعديل في جهاز البصمة "),
                 ])]);
