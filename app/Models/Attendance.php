@@ -16,4 +16,5 @@ class Attendance extends Model
     {
         return $this->belongsTo(Employee::class, "user_id", "userid");
     }
+
 }

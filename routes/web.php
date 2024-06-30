@@ -20,7 +20,11 @@ use Spatie\Period\Precision;
 |
 */
 
-
+Route::get("/test",function (){
+    return response()->json(
+        \App\Models\Section::find(1)->attendance
+    );
+});
 Route::get('/', function () {
     //2023-06-01 00:00:00
 //    dd(Carbon::parse("2023-06-01 00:00:00"));

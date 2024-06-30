@@ -8,6 +8,7 @@ use App\Filament\Resources\AttendanceResource\Pages;
 use App\Filament\Resources\AttendanceResource\RelationManagers;
 use App\Models\Attendance;
 use App\Models\Employee;
+use App\Models\Section;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -63,7 +64,8 @@ class AttendanceResource extends Resource
 //                Tables\Columns\TextColumn::make("uid")->label("معرف البصمة")->searchable(),
                 Tables\Columns\BadgeColumn::make("employee.name")->label("الموظف")->searchable(),
                 Tables\Columns\TextColumn::make("user_id")->label("معرف الموظف")->searchable(),
-                Tables\Columns\TextColumn::make("timestamp")->label("تاريخ البصم")->sortable(),
+                Tables\Columns\TextColumn::make("timestamp")->getStateUsing(fn($record) => Carbon::parse($record->timestamp)->format('Y-m-d'))->label("تاريخ البصم")->sortable(),
+                Tables\Columns\TextColumn::make("created_at")->getStateUsing(fn($record) => Carbon::parse($record->timestamp)->format('H:i:s'))->label("توقيت البصم")->sortable(),
                 Tables\Columns\BadgeColumn::make("state")->label("الحالة")
                     ->formatStateUsing(fn($state) => AttendanceStateEnum::tryFrom(Util::getAttState($state))?->name()),
                 Tables\Columns\BadgeColumn::make("type")
@@ -74,20 +76,21 @@ class AttendanceResource extends Resource
             ->filters([
                 Filter::make('timestamp')
                     ->form([
-                        Forms\Components\DatePicker::make('created_from'),
-                        Forms\Components\DatePicker::make('created_until'),
-                       ])
+                        Forms\Components\Select::make('section_id')->reactive()->options(Section::all()->pluck('name', "id")->toArray())->preload()->searchable()->label("القسم"),
+                        Forms\Components\Select::make('employee_id')->options(function ($get) {
+                            if ($get('section_id')) {
+                                return Employee::whereSectionId($get('section_id'))->pluck('name', "id")->toArray();
+                            }
+                            return [];
+                        }),
+                        Forms\Components\Checkbox::make('monthly')->label('بصمات هذا الشهر')->default(true),
+                    ])
                     ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['created_from'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('timestamp', '>=', $date),
-                            )
-                            ->when(
-                                $data['created_until'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('timestamp', '<=', $date),
-                            ) ;
+                        return $query->when($data['section_id'], fn($q) => $q->whereHas('employee', fn($qy) => $qy->whereSectionId($data['section_id'])))
+                            ->when($data['monthly'], fn($q) => $q->whereMonth('created_at', Carbon::now()->month));
                     })
+
+
             ])
             ->actions([
 //                Tables\Actions\EditAction::make(),
